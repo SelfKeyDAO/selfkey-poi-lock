@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: proprietary
 pragma solidity 0.8.19;
 
-//import "hardhat/console.sol";
+import "hardhat/console.sol";
 import "./external/IERC20.sol";
 import "./external/SafeOwn.sol";
 import "./external/ISelfkeyIdAuthorization.sol";
@@ -27,6 +27,7 @@ contract SelfkeyStaking is SafeOwn {
     uint public minWithdrawAmount;
     uint public timeLockDuration;
 
+    bool public active;
     // Duration of rewards to be paid out (in seconds)
     uint public duration;
     // Timestamp of when the rewards finish
@@ -58,6 +59,13 @@ contract SelfkeyStaking is SafeOwn {
         minStakeAmount = 0;
         minWithdrawAmount = 0;
         timeLockDuration = 0;
+        active = false;
+    }
+
+    function setActive(bool _active) external onlyOwner updateReward(address(0)) {
+        active = _active;
+        updatedAt = block.timestamp;
+        // TODO: event
     }
 
     modifier updateReward(address _account) {
@@ -87,11 +95,12 @@ contract SelfkeyStaking is SafeOwn {
     }
 
     function lastTimeRewardApplicable() public view returns (uint) {
-        return _min(finishAt, block.timestamp);
+        //return _min(finishAt, block.timestamp);
+        return block.timestamp;
     }
 
     function rewardPerToken() public view returns (uint) {
-        if (totalSupply == 0) {
+        if (totalSupply == 0 || !active) {
             return rewardPerTokenStored;
         }
         return rewardPerTokenStored + (rewardRate * (lastTimeRewardApplicable() - updatedAt) * 1e18) / totalSupply;
@@ -128,6 +137,7 @@ contract SelfkeyStaking is SafeOwn {
     }
 
     function earned(address _account) public view returns (uint) {
+        console.log(rewardPerToken());
         return ((balanceOf[_account] * (rewardPerToken() - userRewardPerTokenPaid[_account])) / 1e18) + rewards[_account];
     }
 
@@ -162,6 +172,14 @@ contract SelfkeyStaking is SafeOwn {
         }
     }
     */
+
+    function setRewardRate(uint _rate) external onlyOwner updateReward(address(0)) {
+        // require(finishAt < block.timestamp, "reward duration not finished");
+        require(_rate > 0, "reward rate = 0");
+        rewardRate = _rate;
+        // finishAt = block.timestamp + duration;
+        updatedAt = block.timestamp;
+    }
 
     function setRewardsDuration(uint _duration) external onlyOwner {
         require(finishAt < block.timestamp, "reward duration not finished");

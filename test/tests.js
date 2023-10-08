@@ -73,11 +73,9 @@ describe("Staking tests", function () {
 
             let ts = 604800;
 
-            await contract.setRewardsDuration(ts);
-            expect(await contract.duration()).to.equal(ts);
-
-            const rewardAmount = ethers.utils.parseUnits('51141552.5', 18);
-            await contract.notifyRewardAmount(rewardAmount);
+            await contract.setRewardRate(ethers.utils.parseUnits('10', 18));
+            expect(await contract.rewardRate()).to.equal(ethers.utils.parseUnits('10', 18));
+            await contract.setActive(true);
 
             const _from = contract.address;
             const _to = addr1.address;
@@ -104,11 +102,11 @@ describe("Staking tests", function () {
             // set the timestamp of the next block but don't mine a new block
             //await helpers.time.setNextBlockTimestamp(newTimestamp);
 
-            // 304414002976190476190400
-            // 30441400297619040000
-
+            // 1h in seconds * earn rate of 10 tokens per second
+            const expectedEarning = 60 * 60 * 10;
             const earned = await contract.earned(addr1.address);
-            expect(earned).to.equal('304414002976190476190400');
+            expect(earned).to.equal(ethers.utils.parseUnits(`${expectedEarning}`, 18));
+
             const balance = await contract.balanceOf(addr1.address);
             expect(balance).to.equal(ethers.utils.parseUnits('10', 18));
         })
