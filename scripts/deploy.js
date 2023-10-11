@@ -4,14 +4,19 @@ async function main() {
     const [deployer] = await ethers.getSigners();
     console.log("Deploying contracts with the account:", deployer.address);
 
-    const contractFactory = await hre.ethers.getContractFactory("SelfkeyUnclaimedRegistry");
-    const contract = await upgrades.deployProxy(contractFactory, []);
+    // Mumbai addresses
+    const authContractAddress = "0x1e4BBcF6c10182C03c66bDA5BE6E04509bE1160F";
+    const selfContractAddress = "0x4bf6902f681E679E436b9bb2addbF330B04050e4";
+    const keyContractAddress = "0xe74bc8805df4a6a2ccedd934a818088ccb7a5de6";
+
+    const contractFactory = await hre.ethers.getContractFactory("SelfkeyStaking");
+    const contract = await upgrades.deployProxy(contractFactory, [keyContractAddress, selfContractAddress, authContractAddress]);
     await contract.deployed();
 
     console.log("Deployed contract address:", contract.address);
 
     const signer = "0x89145000ADBeCe9D1FFB26F645dcb0883bc5c3d9";
-    console.log("Signer address:", signer);
+    console.log("Controller wallet address:", signer);
     await contract.changeAuthorizedSigner(signer);
 
 

@@ -11,6 +11,12 @@ function getTimestamp() {
     return dateInSecs;
 }
 
+async function bootUpStaking(contract) {
+    await contract.setRewardRate(ethers.utils.parseUnits('10', 18));
+    expect(await contract.rewardRate()).to.equal(ethers.utils.parseUnits('10', 18));
+    await contract.updateStakingRewardsStatus(true);
+}
+
 
 describe("Staking tests", function () {
 
@@ -39,12 +45,13 @@ describe("Staking tests", function () {
         keyContract = await keyTokenContractFactory.deploy(totalSupply);
 
         let selfTokenContractFactory = await ethers.getContractFactory("SelfToken");
-        selfContract = await selfTokenContractFactory.deploy(authContract.address);
+        selfContract = await upgrades.deployProxy(selfTokenContractFactory, []);
+        // await selfContract.setStakingContract(contract.address);
+        await selfContract.setAuthorizationContract(authContract.address);
 
         let stakingContractFactory = await ethers.getContractFactory("SelfkeyStaking");
-        contract = await stakingContractFactory.deploy(keyContract.address, selfContract.address, authContract.address);
-
-        await selfContract.setStakingContract(contract.address);
+        contract = await upgrades.deployProxy(stakingContractFactory, [keyContract.address, selfContract.address, authContract.address]);
+        await contract.deployed();
 
         await keyContract.connect(owner).transfer(addr1.address, ethers.utils.parseUnits('1000', 18));
         await keyContract.connect(owner).transfer(addr2.address, ethers.utils.parseUnits('1000', 18));
@@ -54,8 +61,8 @@ describe("Staking tests", function () {
     describe("Deployment", function() {
         it("Deployed correctly and Selfkey.ID authorization contract was set", async function() {
             expect(await selfContract.symbol()).to.equal('SELF');
-            expect(await selfContract.authorizationContract()).to.equal(authContract.address);
-            expect(await selfContract.stakingContract()).to.equal(contract.address);
+            expect(await selfContract.authorizationContractAddress()).to.equal(authContract.address);
+            // expect(await selfContract.stakingContract()).to.equal(contract.address);
 
             expect(await keyContract.symbol()).to.equal('KEY');
 
@@ -71,16 +78,12 @@ describe("Staking tests", function () {
         it("Can stake", async function() {
             let expiration = await time.latest();
 
-            let ts = 604800;
-
-            await contract.setRewardRate(ethers.utils.parseUnits('10', 18));
-            expect(await contract.rewardRate()).to.equal(ethers.utils.parseUnits('10', 18));
-            await contract.setActive(true);
+            await bootUpStaking(contract);
 
             const _from = contract.address;
             const _to = addr1.address;
             const _amount = ethers.utils.parseUnits('10', 18);
-            const _scope = 'mint:lock:staking';
+            const _scope = 'selfkey:staking:stake';
             const _timestamp = expiration;
             const _param = ethers.utils.hexZeroPad(0, 32);
 
@@ -96,12 +99,6 @@ describe("Staking tests", function () {
             // advance time by one hour and mine a new block
             await time.increase(3600);
 
-            // mine a new block with timestamp `newTimestamp`
-            //await helpers.time.increaseTo(newTimestamp);
-
-            // set the timestamp of the next block but don't mine a new block
-            //await helpers.time.setNextBlockTimestamp(newTimestamp);
-
             // 1h in seconds * earn rate of 10 tokens per second
             const expectedEarning = 60 * 60 * 10;
             const earned = await contract.earned(addr1.address);
@@ -112,23 +109,14 @@ describe("Staking tests", function () {
         })
 
         it("Earned rewards is divided by the stake pool", async function() {
-            const provider = ethers.getDefaultProvider()
-            //const lastBlockNumber = await provider.getBlockNumber()
-            //const lastBlock = await provider.getBlock(lastBlockNumber)
             let expiration = await time.latest();
 
-            let ts = 31536000;
-
-            await contract.setRewardsDuration(ts);
-            expect(await contract.duration()).to.equal(ts);
-
-            const rewardAmount = ethers.utils.parseUnits('2000', 18);
-            await contract.notifyRewardAmount(rewardAmount);
+            await bootUpStaking(contract);
 
             let _from = contract.address;
             let _to = addr1.address;
             let _amount = ethers.utils.parseUnits('10', 18);
-            let _scope = 'mint:lock:staking';
+            let _scope = 'selfkey:staking:stake';
             let _timestamp = expiration;
             let _param = ethers.utils.hexZeroPad(0, 32);
 
@@ -144,7 +132,7 @@ describe("Staking tests", function () {
             _from = contract.address;
             _to = addr2.address;
             _amount = ethers.utils.parseUnits('10', 18);
-            _scope = 'mint:lock:staking';
+            _scope = 'selfkey:staking:stake';
             _timestamp = expiration;
             _param = ethers.utils.hexZeroPad(0, 32);
 
@@ -160,17 +148,13 @@ describe("Staking tests", function () {
             // advance time by one hour and mine a new block
             await time.increase(3600);
 
-            // mine a new block with timestamp `newTimestamp`
-            //await helpers.time.increaseTo(newTimestamp);
-
-            // set the timestamp of the next block but don't mine a new block
-            //await helpers.time.setNextBlockTimestamp(newTimestamp);
+            const expectedEarning = 60 * 60 * 10;
 
             const earned = await contract.earned(addr1.address);
             const earned2 = await contract.earned(addr2.address);
 
-            expect(earned).to.equal(ethers.utils.parseUnits('0.114282090309487250', 18));
-            expect(earned2).to.equal(ethers.utils.parseUnits('0.114155251141552200', 18));
+            expect(earned).to.equal(ethers.utils.parseUnits(`18020`, 18));
+            expect(earned2).to.equal(ethers.utils.parseUnits(`${expectedEarning/2}`, 18));
         })
     });
 
@@ -178,17 +162,14 @@ describe("Staking tests", function () {
         it("Can widthdraw if timelock has passed", async function() {
             let expiration = await time.latest();
 
-            let ts = 31536000;
-            await contract.setRewardsDuration(ts);
-            expect(await contract.duration()).to.equal(ts);
-            const rewardAmount = ethers.utils.parseUnits('2000', 18);
-            await contract.notifyRewardAmount(rewardAmount);
-            await contract.setTimeLockDuration(3500);
+            await bootUpStaking(contract);
+
+            await contract.setTimeLockDuration(3200);
 
             let _from = contract.address;
             let _to = addr1.address;
             let _amount = ethers.utils.parseUnits('10', 18);
-            let _scope = 'mint:lock:staking';
+            let _scope = 'selfkey:staking:stake';
             let _timestamp = expiration;
             let _param = ethers.utils.hexZeroPad(0, 32);
 
@@ -204,17 +185,18 @@ describe("Staking tests", function () {
             // advance time by one hour and mine a new block
             await time.increase(3600);
 
-            // mine a new block with timestamp `newTimestamp`
-            //await helpers.time.increaseTo(newTimestamp);
+            _from = contract.address;
+            _to = addr1.address;
+            _amount = ethers.utils.parseUnits('10', 18);
+            _scope = 'selfkey:staking:withdraw';
+            _timestamp = expiration;
+            _param = ethers.utils.hexZeroPad(0, 32);
 
-            // set the timestamp of the next block but don't mine a new block
-            //await helpers.time.setNextBlockTimestamp(newTimestamp);
+            hash = await authContract.getMessageHash(_from, _to, _amount, _scope, _param, _timestamp);
+            signature = await signer.signMessage(ethers.utils.arrayify(hash));
+            expect(await authContract.verify(_from, _to, _amount, _scope, _param, _timestamp, signer.address, signature)).to.equal(true);
 
-            const earned = await contract.earned(addr1.address);
-
-            expect(earned).to.equal(ethers.utils.parseUnits('0.228310502283104400', 18));
-
-            await expect(contract.connect(addr1).withdraw(_amount, { from: addr1.address }))
+            await expect(contract.connect(addr1).withdraw(addr1.address, ethers.utils.parseUnits('10', 18), _param, _timestamp, signer.address, signature, { from: addr1.address }))
                 .to.emit(contract, 'StakeWithdraw')
                 .withArgs(addr1.address, _amount);
         });
@@ -222,17 +204,14 @@ describe("Staking tests", function () {
         it("Cannot widthdraw if timelock has not passed", async function() {
             let expiration = await time.latest();
 
-            let ts = 31536000;
-            await contract.setRewardsDuration(ts);
-            expect(await contract.duration()).to.equal(ts);
-            const rewardAmount = ethers.utils.parseUnits('2000', 18);
-            await contract.notifyRewardAmount(rewardAmount);
-            await contract.setTimeLockDuration(3500);
+            await bootUpStaking(contract);
+
+            await contract.setTimeLockDuration(3800);
 
             let _from = contract.address;
             let _to = addr1.address;
             let _amount = ethers.utils.parseUnits('10', 18);
-            let _scope = 'mint:lock:staking';
+            let _scope = 'selfkey:staking:stake';
             let _timestamp = expiration;
             let _param = ethers.utils.hexZeroPad(0, 32);
 
@@ -246,36 +225,39 @@ describe("Staking tests", function () {
                 .withArgs(addr1.address, _amount);
 
             // advance time by one hour and mine a new block
-            await time.increase(2100);
-
-            // mine a new block with timestamp `newTimestamp`
-            //await helpers.time.increaseTo(newTimestamp);
-
-            // set the timestamp of the next block but don't mine a new block
-            //await helpers.time.setNextBlockTimestamp(newTimestamp);
+            await time.increase(3600);
 
             const earned = await contract.earned(addr1.address);
+            // 1h in seconds * earn rate of 10 tokens per second
+            const expectedEarning = 60 * 60 * 10;
+            expect(earned).to.equal(ethers.utils.parseUnits(`${expectedEarning}`, 18));
 
-            expect(earned).to.equal(ethers.utils.parseUnits('0.133181126331810900', 18));
+            _from = contract.address;
+            _to = addr1.address;
+            _amount = ethers.utils.parseUnits('10', 18);
+            _scope = 'selfkey:staking:withdraw';
+            _timestamp = expiration;
+            _param = ethers.utils.hexZeroPad(0, 32);
 
-            await expect(contract.connect(addr1).withdraw(_amount, { from: addr1.address }))
+            hash = await authContract.getMessageHash(_from, _to, _amount, _scope, _param, _timestamp);
+            signature = await signer.signMessage(ethers.utils.arrayify(hash));
+            expect(await authContract.verify(_from, _to, _amount, _scope, _param, _timestamp, signer.address, signature)).to.equal(true);
+
+            await expect(contract.connect(addr1).withdraw(addr1.address, ethers.utils.parseUnits('10', 18), _param, _timestamp, signer.address, signature, { from: addr1.address }))
                 .to.be.revertedWith("Not enough funds available");
         });
 
         it("Can partial widthdraw if timelock has passed", async function() {
             let expiration = await time.latest();
 
-            let ts = 31536000;
-            await contract.setRewardsDuration(ts);
-            expect(await contract.duration()).to.equal(ts);
-            const rewardAmount = ethers.utils.parseUnits('2000', 18);
-            await contract.notifyRewardAmount(rewardAmount);
-            await contract.setTimeLockDuration(3500);
+            await bootUpStaking(contract);
+
+            await contract.setTimeLockDuration(3800);
 
             let _from = contract.address;
             let _to = addr1.address;
             let _amount = ethers.utils.parseUnits('10', 18);
-            let _scope = 'mint:lock:staking';
+            let _scope = 'selfkey:staking:stake';
             let _timestamp = expiration;
             let _param = ethers.utils.hexZeroPad(0, 32);
 
@@ -303,19 +285,25 @@ describe("Staking tests", function () {
                 .to.emit(contract, 'StakeAdded')
                 .withArgs(addr1.address, _amount);
 
-            await time.increase(100);
+            await time.increase(500);
             const balance = (await contract.availableOf(addr1.address));
             expect(balance).to.equal(ethers.utils.parseUnits('10', 18));
 
-            // mine a new block with timestamp `newTimestamp`
-            //await helpers.time.increaseTo(newTimestamp);
+            _from = contract.address;
+            _to = addr1.address;
+            _amount = ethers.utils.parseUnits('10', 18);
+            _scope = 'selfkey:staking:withdraw';
+            _timestamp = expiration;
+            _param = ethers.utils.hexZeroPad(0, 32);
 
-            // set the timestamp of the next block but don't mine a new block
-            //await helpers.time.setNextBlockTimestamp(newTimestamp);
+            hash = await authContract.getMessageHash(_from, _to, _amount, _scope, _param, _timestamp);
+            signature = await signer.signMessage(ethers.utils.arrayify(hash));
+            expect(await authContract.verify(_from, _to, _amount, _scope, _param, _timestamp, signer.address, signature)).to.equal(true);
 
-            await expect(contract.connect(addr1).withdraw(ethers.utils.parseUnits('10', 18), { from: addr1.address }))
+            await expect(contract.connect(addr1).withdraw(addr1.address, ethers.utils.parseUnits('10', 18), _param, _timestamp, signer.address, signature, { from: addr1.address }))
                 .to.emit(contract, 'StakeWithdraw')
                 .withArgs(addr1.address, ethers.utils.parseUnits('10', 18));
+
         });
 
     });
@@ -373,6 +361,7 @@ describe("Staking tests", function () {
     */
 
     describe("Off-chain rewards Minting", function() {
+        /*
         it("Can mint staking and off-chain rewards", async function() {
             const provider = ethers.getDefaultProvider()
             let expiration = await time.latest();
@@ -444,6 +433,7 @@ describe("Staking tests", function () {
 
             expect(await contract.earned(addr1.address)).to.equal(317097919837640);
         })
+        */
 
     });
 });

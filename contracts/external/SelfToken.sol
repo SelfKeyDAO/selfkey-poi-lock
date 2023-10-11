@@ -2,73 +2,149 @@
 pragma solidity 0.8.19;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "./SafeOwn.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import './ISelfkeyIdAuthorization.sol';
-import '../ISelfkeyStaking.sol';
 
-contract SelfToken is IERC20, SafeOwn {
+contract SelfToken is Initializable, IERC20, OwnableUpgradeable {
 
-    ISelfkeyStaking public stakingContract;
-    ISelfkeyIdAuthorization public authorizationContract;
+    /**
+     * @dev Emitted when the pause is triggered by `account`.
+     */
+    event AuthorizationContractChanged(address _authorizationContractAddress);
+
+    /**
+     * @dev Emitted when the pause is triggered by `account`.
+     */
+    event Paused(address account);
+
+    /**
+     * @dev Emitted when the pause is lifted by `account`.
+     */
+    event Unpaused(address account);
+
+    bool private _paused;
+    uint256 private _totalSupply;
 
     mapping(address => uint256) private _balances;
 
     mapping(address => mapping(address => uint256)) private _allowances;
 
-    uint256 private _totalSupply;
-
-    string public constant name = "Self Token";
+    string public constant name = "SELF Token";
     string public constant symbol = "SELF";
     uint8 public constant decimals = 18;
+    address public authorizationContractAddress;
 
-    event AuthorizationContractChanged(address indexed _authorizationContractAddress);
-    event StakingContractChanged(address indexed _stakingContractAddress);
-    event RewardsMinted(address indexed _account, uint256 _amount, uint256 _param);
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() {
+        _disableInitializers();
+    }
 
-    constructor(address _authorizationContractAddress) SafeOwn(14400) {
-        require(_authorizationContractAddress != address(0), "Invalid authorization contract address");
-        authorizationContract = ISelfkeyIdAuthorization(_authorizationContractAddress);
+    function initialize() public initializer {
+        _paused = false;
+        __Ownable_init();
     }
 
     function setAuthorizationContract(address _authorizationContractAddress) public onlyOwner {
         require(_authorizationContractAddress != address(0), "Invalid authorization contract address");
-        authorizationContract = ISelfkeyIdAuthorization(_authorizationContractAddress);
+        authorizationContractAddress = _authorizationContractAddress;
         emit AuthorizationContractChanged(_authorizationContractAddress);
     }
 
-    function setStakingContract(address _stakingContractAddress) public onlyOwner {
-        require(_stakingContractAddress != address(0), "Invalid staking contract address");
-        stakingContract = ISelfkeyStaking(_stakingContractAddress);
-        emit StakingContractChanged(_stakingContractAddress);
+     /**
+     * @dev Modifier to make a function callable only when the contract is not paused.
+     *
+     * Requirements:
+     *
+     * - The contract must not be paused.
+     */
+    modifier whenNotPaused() {
+        _requireNotPaused();
+        _;
     }
 
     /**
-     * User initiated minting function
-     * _param should be a uint indicating the part of the amount
+     * @dev Modifier to make a function callable only when the contract is paused.
+     *
+     * Requirements:
+     *
+     * - The contract must be paused.
      */
-    function mint(address _to, uint256 _amount, bytes32 _param, uint _timestamp, address _signer, bytes memory signature) external {
-        authorizationContract.authorize(address(this), _to, _amount, 'mint:lock:staking', _param, _timestamp, _signer, signature);
-
-        uint param = uint(_param);
-        require(param >= 0, "Invalid param value");
-        require(param <= _amount, "Invalid param value");
-
-        _mint(_to, _amount);
-        stakingContract.notifyRewardMinted(_to, param);
-        emit RewardsMinted(_to, _amount, param);
+    modifier whenPaused() {
+        _requirePaused();
+        _;
     }
 
     /**
-     * User initiated minting function with multi-amount and multi-authorization
+     * @dev Returns true if the contract is paused, and false otherwise.
      */
-    /*
-    function multiMint(address _to, uint256 _amount, uint256 _amount2, uint _timestamp, address _signer, bytes memory signature, bytes memory signature2) external {
-        authorizationContract.authorize(address(this), _to, _amount, 'mint:lock:staking', _timestamp, _signer, signature);
-        authorizationContract.authorize(address(this), _to, _amount2, 'mint:lock:rewards', _timestamp, _signer, signature2);
-        _mint(msg.sender, _amount + _amount2);
-        stakingContract.notifyRewardMinted(_to, _amount);
+    function paused() public view virtual returns (bool) {
+        return _paused;
     }
-    */
+
+    /**
+     * @dev Throws if the contract is paused.
+     */
+    function _requireNotPaused() internal view virtual {
+        require(!paused(), "Pausable: paused");
+    }
+
+    /**
+     * @dev Throws if the contract is not paused.
+     */
+    function _requirePaused() internal view virtual {
+        require(paused(), "Pausable: not paused");
+    }
+
+    /**
+     * @dev Triggers stopped state.
+     *
+     * Requirements:
+     *
+     * - The contract must not be paused.
+     */
+    function _pause() internal virtual whenNotPaused {
+        _paused = true;
+        emit Paused(msg.sender);
+    }
+
+    /**
+     * @dev Returns to normal state.
+     *
+     * Requirements:
+     *
+     * - The contract must be paused.
+     */
+    function _unpause() internal virtual whenPaused {
+        _paused = false;
+        emit Unpaused(msg.sender);
+    }
+
+    function pause() external onlyOwner {
+        _pause();
+    }
+
+    function unpause() external onlyOwner {
+        _unpause();
+    }
+
+
+    /**
+     * Self minting function
+     */
+    function selfMint(address _to, uint256 _amount, bytes32 _param, uint _timestamp, address _signer, bytes memory signature) external whenNotPaused {
+        require(authorizationContractAddress != address(0), "No authorization contract address set");
+        ISelfkeyIdAuthorization authorizationContract = ISelfkeyIdAuthorization(authorizationContractAddress);
+        authorizationContract.authorize(address(this), _to, _amount, 'mint:self', _param, _timestamp, _signer, signature);
+        _mint(msg.sender, _amount);
+    }
+
+    /**
+     * DAO minting function
+     */
+    function mint(address to, uint256 _amount) external onlyOwner whenNotPaused {
+        _mint(to, _amount);
+    }
 
     /**
      * @dev Destroys `amount` tokens from the caller.
