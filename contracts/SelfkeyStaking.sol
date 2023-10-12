@@ -18,25 +18,29 @@ contract SelfkeyStaking is Initializable, OwnableUpgradeable, ISelfkeyStaking {
 
     IERC20 public stakingToken;
     IERC20 public rewardsToken;
-    ISelfkeyIdAuthorization public authorizationContract;
     address public rewardsTokenAddress;
 
-    uint public minStakeAmount;
-    uint public minWithdrawAmount;
-    uint public timeLockDuration;
+    ISelfkeyIdAuthorization public authorizationContract;
 
+    // Minimum possible stake amount (governance setting)
+    uint public minStakeAmount;
+    // Minimum possible withdraw amount (governance setting)
+    uint public minWithdrawAmount;
+    // Duration of staking time lock (governance setting)
+    uint public timeLockDuration;
+    // Reward distribution status (governance setting)
     bool public active;
-    // Minimum of last updated time and reward finish time
-    uint public updatedAt;
-    // Reward to be paid out per second
+    // Reward rate per second (governance setting)
     uint public rewardRate;
+    // Last rewards checkpoint
+    uint public updatedAt;
     // Sum of (reward rate * dt * 1e18 / total supply)
     uint public rewardPerTokenStored;
     // User address => rewardPerTokenStored
     mapping(address => uint) public userRewardPerTokenPaid;
     // User address => rewards to be claimed
     mapping(address => uint) public rewards;
-
+    // User address => time lock entries
     mapping(address => StakingTimeLock[]) private _timeLockEntries;
 
     // Total staked
@@ -57,6 +61,7 @@ contract SelfkeyStaking is Initializable, OwnableUpgradeable, ISelfkeyStaking {
         authorizationContract = ISelfkeyIdAuthorization(_authorizationContract);
         rewardsTokenAddress = _rewardToken;
 
+        // Default governance values
         minStakeAmount = 0;
         minWithdrawAmount = 0;
         timeLockDuration = 0;
@@ -72,15 +77,19 @@ contract SelfkeyStaking is Initializable, OwnableUpgradeable, ISelfkeyStaking {
     function setMinStakeAmount(uint _amount) external onlyOwner {
         require(_amount > 0, "Invalid amount");
         minStakeAmount = _amount;
+        emit MinimumStakeAmountChanged(_amount);
     }
 
     function setMinWithdrawAmount(uint _amount) external onlyOwner {
         require(_amount > 0, "Invalid amount");
         minWithdrawAmount = _amount;
+        emit MinimumWithdrawAmountChanged(_amount);
     }
 
     function setTimeLockDuration(uint _duration) external onlyOwner {
+        require(_duration > 0, "Invalid duration");
         timeLockDuration = _duration;
+        emit TimeLockDurationChanged(_duration);
     }
 
     function updateStakingRewardsStatus(bool _active) external onlyOwner updateReward(address(0)) {
@@ -94,6 +103,13 @@ contract SelfkeyStaking is Initializable, OwnableUpgradeable, ISelfkeyStaking {
         }
     }
 
+    function setRewardRate(uint _rate) external onlyOwner updateReward(address(0)) {
+        require(_rate > 0, "reward rate = 0");
+        rewardRate = _rate;
+        updatedAt = block.timestamp;
+        emit RewardRateChanged(_rate);
+    }
+
     modifier updateReward(address _account) {
         rewardPerTokenStored = rewardPerToken();
         updatedAt = lastTimeRewardApplicable();
@@ -102,11 +118,11 @@ contract SelfkeyStaking is Initializable, OwnableUpgradeable, ISelfkeyStaking {
             rewards[_account] = earned(_account);
             userRewardPerTokenPaid[_account] = rewardPerTokenStored;
         }
+
         _;
     }
 
     function lastTimeRewardApplicable() public view returns (uint) {
-        //return _min(finishAt, block.timestamp);
         return block.timestamp;
     }
 
@@ -117,12 +133,12 @@ contract SelfkeyStaking is Initializable, OwnableUpgradeable, ISelfkeyStaking {
         return rewardPerTokenStored + (rewardRate * (lastTimeRewardApplicable() - updatedAt) * 1e18) / totalSupply;
     }
 
-    // Stake KEY
-    function stake(address _account, uint256 _amount, bytes32 _param, uint _timestamp, address _signer, bytes memory signature) external updateReward(_account) {
-        authorizationContract.authorize(address(this), _account, _amount, 'selfkey:staking:stake', _param, _timestamp, _signer, signature);
+    function stake(address _account, uint256 _amount, bytes32 _param, uint _timestamp, address _signer, bytes memory _signature) external updateReward(_account) {
         require(_amount > 0, "Amount is invalid");
         require(_amount >= minStakeAmount, "Amount is below minimum");
         require(stakingToken.balanceOf(_account) >= _amount, "Not enough funds");
+
+        authorizationContract.authorize(address(this), _account, _amount, 'selfkey:staking:stake', _param, _timestamp, _signer, _signature);
 
         stakingToken.transferFrom(_account, address(this), _amount);
         balanceOf[_account] += _amount;
@@ -133,13 +149,13 @@ contract SelfkeyStaking is Initializable, OwnableUpgradeable, ISelfkeyStaking {
         emit StakeAdded(_account, _amount);
     }
 
-    // Withdraw Staked KEY
-    function withdraw(address _account, uint _amount, bytes32 _param, uint _timestamp, address _signer, bytes memory signature) external updateReward(msg.sender) {
-        authorizationContract.authorize(address(this), _account, _amount, 'selfkey:staking:withdraw', _param, _timestamp, _signer, signature);
+    function withdraw(address _account, uint _amount, bytes32 _param, uint _timestamp, address _signer, bytes memory _signature) external updateReward(msg.sender) {
         require(_amount > 0, "Amount = 0");
         require(_amount >= minWithdrawAmount, "Amount is below minimum");
         require(_amount <= balanceOf[msg.sender], "Not enough funds");
         require(_amount <= availableOf(msg.sender), "Not enough funds available");
+
+        authorizationContract.authorize(address(this), _account, _amount, 'selfkey:staking:withdraw', _param, _timestamp, _signer, _signature);
 
         balanceOf[msg.sender] -= _amount;
         totalSupply -= _amount;
@@ -165,34 +181,25 @@ contract SelfkeyStaking is Initializable, OwnableUpgradeable, ISelfkeyStaking {
         return _available < _balance ? _available : _balance;
     }
 
+    // Self-minting reward
     function notifyRewardWithdraw(address _account, uint _amount) external updateReward(_account) {
         require(msg.sender == rewardsTokenAddress, "Invalid");
         uint reward = rewards[_account];
         if (reward > 0 && _amount > 0) {
             rewards[_account] = reward - _amount;
-            emit RewardWithdrawal(_account, _amount);
+            emit RewardWithdraw(_account, _amount);
         }
     }
 
+    // Reward withdrawal for SELF mintable registry
     function withdrawReward(address _account, uint _amount) external updateReward(_account) {
         require(authorizedSigner == msg.sender, "Not authorized");
         uint reward = rewards[_account];
         if (reward > 0 && _amount > 0) {
             rewards[_account] = reward - _amount;
-            emit RewardWithdrawal(_account, _amount);
+            emit RewardWithdraw(_account, _amount);
         }
     }
 
-    function setRewardRate(uint _rate) external onlyOwner updateReward(address(0)) {
-        // require(finishAt < block.timestamp, "reward duration not finished");
-        require(_rate > 0, "reward rate = 0");
-        rewardRate = _rate;
-        // finishAt = block.timestamp + duration;
-        updatedAt = block.timestamp;
-    }
-
-    function _min(uint x, uint y) private pure returns (uint) {
-        return x <= y ? x : y;
-    }
 }
 

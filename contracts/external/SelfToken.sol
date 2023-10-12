@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import './ISelfkeyIdAuthorization.sol';
+import '../ISelfkeyStaking.sol';
 
 contract SelfToken is Initializable, IERC20, OwnableUpgradeable {
 
@@ -50,6 +51,7 @@ contract SelfToken is Initializable, IERC20, OwnableUpgradeable {
         authorizationContractAddress = _authorizationContractAddress;
         emit AuthorizationContractChanged(_authorizationContractAddress);
     }
+
 
      /**
      * @dev Modifier to make a function callable only when the contract is not paused.

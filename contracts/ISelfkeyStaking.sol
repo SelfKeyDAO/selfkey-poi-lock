@@ -5,10 +5,14 @@ interface ISelfkeyStaking {
 
     event StakeAdded(address indexed _account, uint _amount);
     event StakeWithdraw(address indexed _account, uint _amount);
-    event RewardWithdrawal(address indexed _account, uint _amount);
+    event RewardWithdraw(address indexed _account, uint _amount);
     event StakingPaused();
     event StakingResumed();
     event AuthorizedSignerChanged(address indexed _address);
+    event MinimumStakeAmountChanged(uint _amount);
+    event MinimumWithdrawAmountChanged(uint _amount);
+    event TimeLockDurationChanged(uint _duration);
+    event RewardRateChanged(uint _rate);
 
     function updateStakingRewardsStatus(bool _active) external;
 
