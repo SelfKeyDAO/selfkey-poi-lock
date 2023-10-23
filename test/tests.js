@@ -111,6 +111,7 @@ describe("Staking tests", function () {
             let _timestamp = expiration;
             let _param = ethers.utils.hexZeroPad(0, 32);
 
+            // Stake 10 KEY for addr1
             let hash = await authContract.getMessageHash(_from, _to, _amount, _scope, _param, _timestamp);
             let signature = await signer.signMessage(ethers.utils.arrayify(hash));
             expect(await authContract.verify(_from, _to, _amount, _scope, _param, _timestamp, signer.address, signature)).to.equal(true);
@@ -127,6 +128,12 @@ describe("Staking tests", function () {
             _timestamp = expiration;
             _param = ethers.utils.hexZeroPad(0, 32);
 
+
+            // Advance time by 10 seconds and mine a new block
+            await time.increase(10);
+
+
+            // Stake 10 KEY for addr2
             hash = await authContract.getMessageHash(_from, _to, _amount, _scope, _param, _timestamp);
             signature = await signer.signMessage(ethers.utils.arrayify(hash));
             expect(await authContract.verify(_from, _to, _amount, _scope, _param, _timestamp, signer.address, signature)).to.equal(true);
@@ -139,13 +146,23 @@ describe("Staking tests", function () {
             // advance time by one hour and mine a new block
             await time.increase(3600);
 
-            const expectedEarning = 60 * 60 * 10;
+            // 1h in seconds * earn rate of 10 tokens per second
+            // However in testing each block minting advances time by 2 seconds, so we need to adjust the expected earning for 12 seconds
+            const expectedSingleEarning = 10 * 12;
+
+            // During the period (1h) that two stakes were active, the earnings are divided equally between the two addresses
+            const expectedSplitEarning = ((60 * 60) * 10) / 2;
+
+            // For addr1 the earnings are the sum of the earnings during the initial period (12s) where addr1 was the unique staker
+            // plus the time where both addr1 and addr2 were staking
+            const expectedEarningForAddr1 = expectedSingleEarning + expectedSplitEarning;
+            const expectedEarningForAddr2 = expectedSplitEarning;
 
             const earned = await contract.earned(addr1.address);
             const earned2 = await contract.earned(addr2.address);
 
-            expect(earned).to.equal(ethers.utils.parseUnits(`18020`, 18));
-            expect(earned2).to.equal(ethers.utils.parseUnits(`${expectedEarning/2}`, 18));
+            expect(earned).to.equal(ethers.utils.parseUnits(`${expectedEarningForAddr1}`, 18));
+            expect(earned2).to.equal(ethers.utils.parseUnits(`${expectedEarningForAddr2}`, 18));
         })
     });
 
