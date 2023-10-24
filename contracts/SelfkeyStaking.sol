@@ -74,9 +74,10 @@ contract SelfkeyStaking is Initializable, OwnableUpgradeable, ISelfkeyStaking {
         emit AuthorizedSignerChanged(_signer);
     }
 
-    function setMinStakeAmount(uint _amount) external onlyOwner {
+    function setMinStakeAmount(uint _amount) external onlyOwner updateReward(address(0)) {
         require(_amount > 0, "Invalid amount");
         minStakeAmount = _amount;
+        updatedAt = block.timestamp;
         emit MinimumStakeAmountChanged(_amount);
     }
 
@@ -152,20 +153,24 @@ contract SelfkeyStaking is Initializable, OwnableUpgradeable, ISelfkeyStaking {
     function withdraw(address _account, uint _amount, bytes32 _param, uint _timestamp, address _signer, bytes memory _signature) external updateReward(msg.sender) {
         require(_amount > 0, "Amount = 0");
         require(_amount >= minWithdrawAmount, "Amount is below minimum");
-        require(_amount <= balanceOf[msg.sender], "Not enough funds");
-        require(_amount <= availableOf(msg.sender), "Not enough funds available");
+        require(_amount <= balanceOf[_account], "Not enough funds");
+        require(_amount <= availableOf(_account), "Not enough funds available");
+        if (_amount != balanceOf[_account]) {
+            require((balanceOf[_account] - _amount >= minStakeAmount), "Amount is below minimum");
+        }
 
         authorizationContract.authorize(address(this), _account, _amount, 'selfkey:staking:withdraw', _param, _timestamp, _signer, _signature);
 
-        balanceOf[msg.sender] -= _amount;
+        balanceOf[_account] -= _amount;
         totalSupply -= _amount;
-        stakingToken.transfer(msg.sender, _amount);
+        stakingToken.transfer(_account, _amount);
 
-        emit StakeWithdraw(msg.sender, _amount);
+        emit StakeWithdraw(_account, _amount);
     }
 
     function earned(address _account) public view returns (uint) {
-        return ((balanceOf[_account] * (rewardPerToken() - userRewardPerTokenPaid[_account])) / 1e18) + rewards[_account];
+        uint balance = balanceOf[_account];
+        return ((balance * (rewardPerToken() - userRewardPerTokenPaid[_account])) / 1e18) + rewards[_account];
     }
 
     function availableOf(address _account) public view returns(uint) {

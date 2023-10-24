@@ -2,9 +2,9 @@
 const { defender } = require('hardhat');
 
 async function main() {
-  const proxyAddress = '';
+  const proxyAddress = '0xda9783A24fa2D9aC452246b96029A9d1d40ECFE1';
 
-  const contract = await ethers.getContractFactory("SelfkeyUnclaimedRegistry");
+  const contract = await ethers.getContractFactory("SelfkeyStaking");
   console.log("Preparing proposal...");
   const proposal = await defender.proposeUpgrade(proxyAddress, contract);
   console.log("Upgrade proposal created at:", proposal.url);

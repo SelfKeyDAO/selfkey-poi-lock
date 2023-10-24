@@ -8,6 +8,20 @@ async function bootUpStaking(contract) {
     await contract.updateStakingRewardsStatus(true);
 }
 
+async function stakeParams({ contract, to, amount, timestamp }) {
+    const _from = contract.address;
+    const _to = to;
+    const _amount = ethers.utils.parseUnits(amount, 18);
+    const _scope = 'selfkey:staking:stake';
+    const _timestamp = timestamp;
+    const _param = ethers.utils.hexZeroPad(0, 32);
+
+    let hash = await authContract.getMessageHash(_from, _to, _amount, _scope, _param, _timestamp);
+    let signature = await signer.signMessage(ethers.utils.arrayify(hash));
+    expect(await authContract.verify(_from, _to, _amount, _scope, _param, _timestamp, signer.address, signature)).to.equal(true);
+    return { _from, _to, _amount, _scope, _timestamp, _param, signature };
+}
+
 
 describe("Staking tests", function () {
 
@@ -97,7 +111,7 @@ describe("Staking tests", function () {
 
             const balance = await contract.balanceOf(addr1.address);
             expect(balance).to.equal(ethers.utils.parseUnits('10', 18));
-        })
+        });
 
         it("Earned rewards is divided by the stake pool", async function() {
             let expiration = await time.latest();
@@ -163,7 +177,9 @@ describe("Staking tests", function () {
 
             expect(earned).to.equal(ethers.utils.parseUnits(`${expectedEarningForAddr1}`, 18));
             expect(earned2).to.equal(ethers.utils.parseUnits(`${expectedEarningForAddr2}`, 18));
-        })
+        });
+
+
     });
 
     describe("Widthdrawal", function() {
@@ -259,6 +275,7 @@ describe("Staking tests", function () {
             let expiration = await time.latest();
 
             await bootUpStaking(contract);
+            await contract.setMinStakeAmount(ethers.utils.parseUnits('10', 18));
 
             await contract.setTimeLockDuration(3800);
 
@@ -296,6 +313,63 @@ describe("Staking tests", function () {
             await time.increase(500);
             const balance = (await contract.availableOf(addr1.address));
             expect(balance).to.equal(ethers.utils.parseUnits('10', 18));
+
+            _from = contract.address;
+            _to = addr1.address;
+            _amount = ethers.utils.parseUnits('10', 18);
+            _scope = 'selfkey:staking:withdraw';
+            _timestamp = expiration;
+            _param = ethers.utils.hexZeroPad(0, 32);
+
+            hash = await authContract.getMessageHash(_from, _to, _amount, _scope, _param, _timestamp);
+            signature = await signer.signMessage(ethers.utils.arrayify(hash));
+            expect(await authContract.verify(_from, _to, _amount, _scope, _param, _timestamp, signer.address, signature)).to.equal(true);
+
+            await expect(contract.connect(addr1).withdraw(addr1.address, ethers.utils.parseUnits('10', 18), _param, _timestamp, signer.address, signature, { from: addr1.address }))
+                .to.emit(contract, 'StakeWithdraw')
+                .withArgs(addr1.address, ethers.utils.parseUnits('10', 18));
+
+        });
+
+        it("Cannot partial widthdraw if below min stake", async function() {
+            let expiration = await time.latest();
+            await contract.setMinStakeAmount(ethers.utils.parseUnits('10', 18));
+            await bootUpStaking(contract);
+
+
+            let _from = contract.address;
+            let _to = addr1.address;
+            let _amount = ethers.utils.parseUnits('10', 18);
+            let _scope = 'selfkey:staking:stake';
+            let _timestamp = expiration;
+            let _param = ethers.utils.hexZeroPad(0, 32);
+
+            let hash = await authContract.getMessageHash(_from, _to, _amount, _scope, _param, _timestamp);
+            let signature = await signer.signMessage(ethers.utils.arrayify(hash));
+            expect(await authContract.verify(_from, _to, _amount, _scope, _param, _timestamp, signer.address, signature)).to.equal(true);
+
+            await keyContract.connect(addr1).approve(contract.address, ethers.utils.parseUnits('10', 18), { from: addr1.address });
+            await expect(contract.connect(addr1).stake(addr1.address, ethers.utils.parseUnits('10', 18), _param, _timestamp, signer.address, signature, { from: addr1.address }))
+                .to.emit(contract, 'StakeAdded')
+                .withArgs(addr1.address, _amount);
+
+            // advance time by one hour and mine a new block
+            await time.increase(3600);
+
+            _timestamp = await time.latest();
+            _from = contract.address;
+            _to = addr1.address;
+            _amount = ethers.utils.parseUnits('5', 18);
+            _scope = 'selfkey:staking:withdraw';
+            _timestamp = expiration;
+            _param = ethers.utils.hexZeroPad(0, 32);
+
+            hash = await authContract.getMessageHash(_from, _to, _amount, _scope, _param, _timestamp);
+            signature = await signer.signMessage(ethers.utils.arrayify(hash));
+            expect(await authContract.verify(_from, _to, _amount, _scope, _param, _timestamp, signer.address, signature)).to.equal(true);
+
+            await expect(contract.connect(addr1).withdraw(addr1.address, ethers.utils.parseUnits('5', 18), _param, _timestamp, signer.address, signature, { from: addr1.address }))
+                .to.be.revertedWith("Amount is below minimum");
 
             _from = contract.address;
             _to = addr1.address;
