@@ -9,7 +9,7 @@ async function main() {
     const selfContractAddress = "0x4bf6902f681E679E436b9bb2addbF330B04050e4";
     const keyContractAddress = "0xe74bc8805df4a6a2ccedd934a818088ccb7a5de6";
 
-    const contractFactory = await hre.ethers.getContractFactory("SelfkeyStaking");
+    const contractFactory = await hre.ethers.getContractFactory("SelfkeyPoiLock");
     const contract = await upgrades.deployProxy(contractFactory, [keyContractAddress, selfContractAddress, authContractAddress]);
     await contract.deployed();
 
