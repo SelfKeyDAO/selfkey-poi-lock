@@ -3,9 +3,9 @@ const { ethers, upgrades } = require("hardhat");
 const { time } = require("@nomicfoundation/hardhat-network-helpers");
 
 async function bootUpStaking(contract) {
-    await contract.setRewardRate(ethers.utils.parseUnits('10', 18));
-    expect(await contract.rewardRate()).to.equal(ethers.utils.parseUnits('10', 18));
-    await contract.updateStakingRewardsStatus(true);
+    await contract.setMintableTokenRate(ethers.utils.parseUnits('10', 18));
+    expect(await contract.mintableRate()).to.equal(ethers.utils.parseUnits('10', 18));
+    await contract.updateStatus(true);
 }
 
 async function stakeParams({ contract, to, amount, timestamp }) {
@@ -54,7 +54,7 @@ describe("Staking tests", function () {
         // await selfContract.setStakingContract(contract.address);
         await selfContract.setAuthorizationContract(authContract.address);
 
-        let stakingContractFactory = await ethers.getContractFactory("SelfkeyStaking");
+        let stakingContractFactory = await ethers.getContractFactory("SelfkeyPoiLock");
         contract = await upgrades.deployProxy(stakingContractFactory, [keyContract.address, selfContract.address, authContract.address]);
         await contract.deployed();
 
@@ -71,16 +71,16 @@ describe("Staking tests", function () {
 
             expect(await keyContract.symbol()).to.equal('KEY');
 
-            expect(await contract.stakingToken()).to.equal(keyContract.address);
-            expect(await contract.rewardsToken()).to.equal(selfContract.address);
+            expect(await contract.lockToken()).to.equal(keyContract.address);
+            expect(await contract.mintableToken()).to.equal(selfContract.address);
             expect(await contract.authorizationContract()).to.equal(authContract.address);
 
             expect(await keyContract.balanceOf(addr1.address)).to.equal(ethers.utils.parseUnits('1000', 18));
         });
     });
 
-    describe("Staking", function() {
-        it("Can stake", async function() {
+    describe("Locking", function() {
+        it("Can Lock", async function() {
             let expiration = await time.latest();
 
             await bootUpStaking(contract);
@@ -97,8 +97,8 @@ describe("Staking tests", function () {
             expect(await authContract.verify(_from, _to, _amount, _scope, _param, _timestamp, signer.address, signature)).to.equal(true);
 
             await keyContract.connect(addr1).approve(contract.address, ethers.utils.parseUnits('10', 18), { from: addr1.address });
-            await expect(contract.connect(addr1).stake(addr1.address, ethers.utils.parseUnits('10', 18), _param, _timestamp, signer.address, signature, { from: addr1.address }))
-                .to.emit(contract, 'StakeAdded')
+            await expect(contract.connect(addr1).lock(addr1.address, ethers.utils.parseUnits('10', 18), _param, _timestamp, signer.address, signature, { from: addr1.address }))
+                .to.emit(contract, 'LockedAmountAdded')
                 .withArgs(addr1.address, _amount);
 
             // advance time by one hour and mine a new block
@@ -113,7 +113,7 @@ describe("Staking tests", function () {
             expect(balance).to.equal(ethers.utils.parseUnits('10', 18));
         });
 
-        it("Earned rewards is divided by the stake pool", async function() {
+        it("Mintable tokens are calculated as a share of the pool", async function() {
             let expiration = await time.latest();
 
             await bootUpStaking(contract);
@@ -125,14 +125,14 @@ describe("Staking tests", function () {
             let _timestamp = expiration;
             let _param = ethers.utils.hexZeroPad(0, 32);
 
-            // Stake 10 KEY for addr1
+            // Lock 10 KEY for addr1
             let hash = await authContract.getMessageHash(_from, _to, _amount, _scope, _param, _timestamp);
             let signature = await signer.signMessage(ethers.utils.arrayify(hash));
             expect(await authContract.verify(_from, _to, _amount, _scope, _param, _timestamp, signer.address, signature)).to.equal(true);
 
             await keyContract.connect(addr1).approve(contract.address, ethers.utils.parseUnits('10', 18), { from: addr1.address });
-            await expect(contract.connect(addr1).stake(addr1.address, ethers.utils.parseUnits('10', 18), _param, _timestamp, signer.address, signature, { from: addr1.address }))
-                .to.emit(contract, 'StakeAdded')
+            await expect(contract.connect(addr1).lock(addr1.address, ethers.utils.parseUnits('10', 18), _param, _timestamp, signer.address, signature, { from: addr1.address }))
+                .to.emit(contract, 'LockedAmountAdded')
                 .withArgs(addr1.address, _amount);
 
             _from = contract.address;
@@ -147,14 +147,14 @@ describe("Staking tests", function () {
             await time.increase(10);
 
 
-            // Stake 10 KEY for addr2
+            // Lock 10 KEY for addr2
             hash = await authContract.getMessageHash(_from, _to, _amount, _scope, _param, _timestamp);
             signature = await signer.signMessage(ethers.utils.arrayify(hash));
             expect(await authContract.verify(_from, _to, _amount, _scope, _param, _timestamp, signer.address, signature)).to.equal(true);
 
             await keyContract.connect(addr2).approve(contract.address, ethers.utils.parseUnits('10', 18), { from: addr2.address });
-            await expect(contract.connect(addr2).stake(addr2.address, ethers.utils.parseUnits('10', 18), _param, _timestamp, signer.address, signature, { from: addr2.address }))
-                .to.emit(contract, 'StakeAdded')
+            await expect(contract.connect(addr2).lock(addr2.address, ethers.utils.parseUnits('10', 18), _param, _timestamp, signer.address, signature, { from: addr2.address }))
+                .to.emit(contract, 'LockedAmountAdded')
                 .withArgs(addr2.address, _amount);
 
             // advance time by one hour and mine a new block
@@ -182,13 +182,11 @@ describe("Staking tests", function () {
 
     });
 
-    describe("Widthdrawal", function() {
-        it("Can widthdraw if timelock has passed", async function() {
+    describe("Unlock", function() {
+        it("Can Unlock", async function() {
             let expiration = await time.latest();
 
             await bootUpStaking(contract);
-
-            await contract.setTimeLockDuration(3200);
 
             let _from = contract.address;
             let _to = addr1.address;
@@ -202,8 +200,8 @@ describe("Staking tests", function () {
             expect(await authContract.verify(_from, _to, _amount, _scope, _param, _timestamp, signer.address, signature)).to.equal(true);
 
             await keyContract.connect(addr1).approve(contract.address, ethers.utils.parseUnits('10', 18), { from: addr1.address });
-            await expect(contract.connect(addr1).stake(addr1.address, ethers.utils.parseUnits('10', 18), _param, _timestamp, signer.address, signature, { from: addr1.address }))
-                .to.emit(contract, 'StakeAdded')
+            await expect(contract.connect(addr1).lock(addr1.address, ethers.utils.parseUnits('10', 18), _param, _timestamp, signer.address, signature, { from: addr1.address }))
+                .to.emit(contract, 'LockedAmountAdded')
                 .withArgs(addr1.address, _amount);
 
             // advance time by one hour and mine a new block
@@ -220,17 +218,16 @@ describe("Staking tests", function () {
             signature = await signer.signMessage(ethers.utils.arrayify(hash));
             expect(await authContract.verify(_from, _to, _amount, _scope, _param, _timestamp, signer.address, signature)).to.equal(true);
 
-            await expect(contract.connect(addr1).withdraw(addr1.address, ethers.utils.parseUnits('10', 18), _param, _timestamp, signer.address, signature, { from: addr1.address }))
-                .to.emit(contract, 'StakeWithdraw')
+            await expect(contract.connect(addr1).unlock(addr1.address, ethers.utils.parseUnits('10', 18), _param, _timestamp, signer.address, signature, { from: addr1.address }))
+                .to.emit(contract, 'UnlockAmount')
                 .withArgs(addr1.address, _amount);
         });
 
-        it("Cannot widthdraw if timelock has not passed", async function() {
+        it("Cannot Unlock if less that min unlock setting", async function() {
             let expiration = await time.latest();
 
+            await contract.setMinUnlockAmount(ethers.utils.parseUnits('5', 18));
             await bootUpStaking(contract);
-
-            await contract.setTimeLockDuration(3800);
 
             let _from = contract.address;
             let _to = addr1.address;
@@ -244,21 +241,16 @@ describe("Staking tests", function () {
             expect(await authContract.verify(_from, _to, _amount, _scope, _param, _timestamp, signer.address, signature)).to.equal(true);
 
             await keyContract.connect(addr1).approve(contract.address, ethers.utils.parseUnits('10', 18), { from: addr1.address });
-            await expect(contract.connect(addr1).stake(addr1.address, ethers.utils.parseUnits('10', 18), _param, _timestamp, signer.address, signature, { from: addr1.address }))
-                .to.emit(contract, 'StakeAdded')
+            await expect(contract.connect(addr1).lock(addr1.address, ethers.utils.parseUnits('10', 18), _param, _timestamp, signer.address, signature, { from: addr1.address }))
+                .to.emit(contract, 'LockedAmountAdded')
                 .withArgs(addr1.address, _amount);
 
             // advance time by one hour and mine a new block
             await time.increase(3600);
 
-            const earned = await contract.earned(addr1.address);
-            // 1h in seconds * earn rate of 10 tokens per second
-            const expectedEarning = 60 * 60 * 10;
-            expect(earned).to.equal(ethers.utils.parseUnits(`${expectedEarning}`, 18));
-
             _from = contract.address;
             _to = addr1.address;
-            _amount = ethers.utils.parseUnits('10', 18);
+            _amount = ethers.utils.parseUnits('4', 18);
             _scope = 'selfkey:staking:withdraw';
             _timestamp = expiration;
             _param = ethers.utils.hexZeroPad(0, 32);
@@ -267,17 +259,16 @@ describe("Staking tests", function () {
             signature = await signer.signMessage(ethers.utils.arrayify(hash));
             expect(await authContract.verify(_from, _to, _amount, _scope, _param, _timestamp, signer.address, signature)).to.equal(true);
 
-            await expect(contract.connect(addr1).withdraw(addr1.address, ethers.utils.parseUnits('10', 18), _param, _timestamp, signer.address, signature, { from: addr1.address }))
-                .to.be.revertedWith("Not enough funds available");
+            await expect(contract.connect(addr1).unlock(addr1.address, ethers.utils.parseUnits('4', 18), _param, _timestamp, signer.address, signature, { from: addr1.address }))
+                .to.be.revertedWith("Amount is below minimum");
         });
 
-        it("Can partial widthdraw if timelock has passed", async function() {
+
+
+        it("Cannot partial widthdraw if below min lock amount", async function() {
             let expiration = await time.latest();
-
+            await contract.setMinLockAmount(ethers.utils.parseUnits('10', 18));
             await bootUpStaking(contract);
-            await contract.setMinStakeAmount(ethers.utils.parseUnits('10', 18));
-
-            await contract.setTimeLockDuration(3800);
 
             let _from = contract.address;
             let _to = addr1.address;
@@ -291,66 +282,8 @@ describe("Staking tests", function () {
             expect(await authContract.verify(_from, _to, _amount, _scope, _param, _timestamp, signer.address, signature)).to.equal(true);
 
             await keyContract.connect(addr1).approve(contract.address, ethers.utils.parseUnits('10', 18), { from: addr1.address });
-            await expect(contract.connect(addr1).stake(addr1.address, ethers.utils.parseUnits('10', 18), _param, _timestamp, signer.address, signature, { from: addr1.address }))
-                .to.emit(contract, 'StakeAdded')
-                .withArgs(addr1.address, _amount);
-
-            // advance time by one hour and mine a new block
-            await time.increase(3600);
-
-            _timestamp = await time.latest();
-            _amount = ethers.utils.parseUnits('20', 18);
-
-            hash = await authContract.getMessageHash(_from, _to, _amount, _scope, _param, _timestamp);
-            signature = await signer.signMessage(ethers.utils.arrayify(hash));
-            expect(await authContract.verify(_from, _to, _amount, _scope, _param, _timestamp, signer.address, signature)).to.equal(true);
-
-            await keyContract.connect(addr1).approve(contract.address, ethers.utils.parseUnits('20', 18), { from: addr1.address });
-            await expect(contract.connect(addr1).stake(addr1.address, ethers.utils.parseUnits('20', 18), _param, _timestamp, signer.address, signature, { from: addr1.address }))
-                .to.emit(contract, 'StakeAdded')
-                .withArgs(addr1.address, _amount);
-
-            await time.increase(500);
-            const balance = (await contract.availableOf(addr1.address));
-            expect(balance).to.equal(ethers.utils.parseUnits('10', 18));
-
-            _from = contract.address;
-            _to = addr1.address;
-            _amount = ethers.utils.parseUnits('10', 18);
-            _scope = 'selfkey:staking:withdraw';
-            _timestamp = expiration;
-            _param = ethers.utils.hexZeroPad(0, 32);
-
-            hash = await authContract.getMessageHash(_from, _to, _amount, _scope, _param, _timestamp);
-            signature = await signer.signMessage(ethers.utils.arrayify(hash));
-            expect(await authContract.verify(_from, _to, _amount, _scope, _param, _timestamp, signer.address, signature)).to.equal(true);
-
-            await expect(contract.connect(addr1).withdraw(addr1.address, ethers.utils.parseUnits('10', 18), _param, _timestamp, signer.address, signature, { from: addr1.address }))
-                .to.emit(contract, 'StakeWithdraw')
-                .withArgs(addr1.address, ethers.utils.parseUnits('10', 18));
-
-        });
-
-        it("Cannot partial widthdraw if below min stake", async function() {
-            let expiration = await time.latest();
-            await contract.setMinStakeAmount(ethers.utils.parseUnits('10', 18));
-            await bootUpStaking(contract);
-
-
-            let _from = contract.address;
-            let _to = addr1.address;
-            let _amount = ethers.utils.parseUnits('10', 18);
-            let _scope = 'selfkey:staking:stake';
-            let _timestamp = expiration;
-            let _param = ethers.utils.hexZeroPad(0, 32);
-
-            let hash = await authContract.getMessageHash(_from, _to, _amount, _scope, _param, _timestamp);
-            let signature = await signer.signMessage(ethers.utils.arrayify(hash));
-            expect(await authContract.verify(_from, _to, _amount, _scope, _param, _timestamp, signer.address, signature)).to.equal(true);
-
-            await keyContract.connect(addr1).approve(contract.address, ethers.utils.parseUnits('10', 18), { from: addr1.address });
-            await expect(contract.connect(addr1).stake(addr1.address, ethers.utils.parseUnits('10', 18), _param, _timestamp, signer.address, signature, { from: addr1.address }))
-                .to.emit(contract, 'StakeAdded')
+            await expect(contract.connect(addr1).lock(addr1.address, ethers.utils.parseUnits('10', 18), _param, _timestamp, signer.address, signature, { from: addr1.address }))
+                .to.emit(contract, 'LockedAmountAdded')
                 .withArgs(addr1.address, _amount);
 
             // advance time by one hour and mine a new block
@@ -368,7 +301,7 @@ describe("Staking tests", function () {
             signature = await signer.signMessage(ethers.utils.arrayify(hash));
             expect(await authContract.verify(_from, _to, _amount, _scope, _param, _timestamp, signer.address, signature)).to.equal(true);
 
-            await expect(contract.connect(addr1).withdraw(addr1.address, ethers.utils.parseUnits('5', 18), _param, _timestamp, signer.address, signature, { from: addr1.address }))
+            await expect(contract.connect(addr1).unlock(addr1.address, ethers.utils.parseUnits('5', 18), _param, _timestamp, signer.address, signature, { from: addr1.address }))
                 .to.be.revertedWith("Amount is below minimum");
 
             _from = contract.address;
@@ -382,8 +315,8 @@ describe("Staking tests", function () {
             signature = await signer.signMessage(ethers.utils.arrayify(hash));
             expect(await authContract.verify(_from, _to, _amount, _scope, _param, _timestamp, signer.address, signature)).to.equal(true);
 
-            await expect(contract.connect(addr1).withdraw(addr1.address, ethers.utils.parseUnits('10', 18), _param, _timestamp, signer.address, signature, { from: addr1.address }))
-                .to.emit(contract, 'StakeWithdraw')
+            await expect(contract.connect(addr1).unlock(addr1.address, ethers.utils.parseUnits('10', 18), _param, _timestamp, signer.address, signature, { from: addr1.address }))
+                .to.emit(contract, 'UnlockAmount')
                 .withArgs(addr1.address, ethers.utils.parseUnits('10', 18));
 
         });
