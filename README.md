@@ -1,4 +1,4 @@
-# Selfkey.DAO Staking contract
+# Selfkey.DAO POI Lock contract
 
 ## Overview
 
