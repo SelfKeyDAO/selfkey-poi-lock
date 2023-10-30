@@ -179,6 +179,131 @@ describe("Staking tests", function () {
             expect(earned2).to.equal(ethers.utils.parseUnits(`${expectedEarningForAddr2}`, 18));
         });
 
+        it("Cannot Lock if below minLockAmount", async function() {
+            let expiration = await time.latest();
+
+            await contract.setMinLockAmount(ethers.utils.parseUnits('20', 18));
+            await bootUpStaking(contract);
+
+            const _from = contract.address;
+            const _to = addr1.address;
+            const _amount = ethers.utils.parseUnits('10', 18);
+            const _scope = 'selfkey:staking:stake';
+            const _timestamp = expiration;
+            const _param = ethers.utils.hexZeroPad(0, 32);
+
+            const hash = await authContract.getMessageHash(_from, _to, _amount, _scope, _param, _timestamp);
+            const signature = await signer.signMessage(ethers.utils.arrayify(hash));
+            expect(await authContract.verify(_from, _to, _amount, _scope, _param, _timestamp, signer.address, signature)).to.equal(true);
+
+            await keyContract.connect(addr1).approve(contract.address, ethers.utils.parseUnits('10', 18), { from: addr1.address });
+            await expect(contract.connect(addr1).lock(addr1.address, ethers.utils.parseUnits('10', 18), _param, _timestamp, signer.address, signature, { from: addr1.address }))
+                .to.be.revertedWith("Amount is below minimum");
+        });
+
+        it("Can Lock if amount + balance is larger than minLockAmount", async function() {
+            let expiration = await time.latest();
+
+            await contract.setMinLockAmount(ethers.utils.parseUnits('10', 18));
+            await bootUpStaking(contract);
+
+            let _from = contract.address;
+            let _to = addr1.address;
+            let _amount = ethers.utils.parseUnits('10', 18);
+            let _scope = 'selfkey:staking:stake';
+            let _timestamp = expiration;
+            let _param = ethers.utils.hexZeroPad(0, 32);
+
+            let hash = await authContract.getMessageHash(_from, _to, _amount, _scope, _param, _timestamp);
+            let signature = await signer.signMessage(ethers.utils.arrayify(hash));
+            expect(await authContract.verify(_from, _to, _amount, _scope, _param, _timestamp, signer.address, signature)).to.equal(true);
+
+            await keyContract.connect(addr1).approve(contract.address, ethers.utils.parseUnits('10', 18), { from: addr1.address });
+            await expect(contract.connect(addr1).lock(addr1.address, ethers.utils.parseUnits('10', 18), _param, _timestamp, signer.address, signature, { from: addr1.address }))
+                .to.emit(contract, 'LockedAmountAdded')
+                .withArgs(addr1.address, _amount);
+
+            // advance time by one hour and mine a new block
+            await time.increase(3600);
+
+            // 1h in seconds * earn rate of 10 tokens per second
+            const expectedEarning = 60 * 60 * 10;
+            const earned = await contract.earned(addr1.address);
+            expect(earned).to.equal(ethers.utils.parseUnits(`${expectedEarning}`, 18));
+
+            const balance = await contract.balanceOf(addr1.address);
+            expect(balance).to.equal(ethers.utils.parseUnits('10', 18));
+
+            await contract.setMinLockAmount(ethers.utils.parseUnits('15', 18));
+            expiration = await time.latest();
+
+            _from = contract.address;
+            _to = addr1.address;
+            _amount = ethers.utils.parseUnits('5', 18);
+            _scope = 'selfkey:staking:stake';
+            _timestamp = expiration;
+            _param = ethers.utils.hexZeroPad(0, 32);
+
+            hash = await authContract.getMessageHash(_from, _to, _amount, _scope, _param, _timestamp);
+            signature = await signer.signMessage(ethers.utils.arrayify(hash));
+            expect(await authContract.verify(_from, _to, _amount, _scope, _param, _timestamp, signer.address, signature)).to.equal(true);
+            await keyContract.connect(addr1).approve(contract.address, ethers.utils.parseUnits('10', 18), { from: addr1.address });
+            await expect(contract.connect(addr1).lock(addr1.address, ethers.utils.parseUnits('5', 18), _param, _timestamp, signer.address, signature, { from: addr1.address }))
+                .to.emit(contract, 'LockedAmountAdded')
+                .withArgs(addr1.address, _amount);
+        });
+
+        it("Cannot Lock if amount + balance is below minLockAmount", async function() {
+            let expiration = await time.latest();
+
+            await contract.setMinLockAmount(ethers.utils.parseUnits('10', 18));
+            await bootUpStaking(contract);
+
+            let _from = contract.address;
+            let _to = addr1.address;
+            let _amount = ethers.utils.parseUnits('10', 18);
+            let _scope = 'selfkey:staking:stake';
+            let _timestamp = expiration;
+            let _param = ethers.utils.hexZeroPad(0, 32);
+
+            let hash = await authContract.getMessageHash(_from, _to, _amount, _scope, _param, _timestamp);
+            let signature = await signer.signMessage(ethers.utils.arrayify(hash));
+            expect(await authContract.verify(_from, _to, _amount, _scope, _param, _timestamp, signer.address, signature)).to.equal(true);
+
+            await keyContract.connect(addr1).approve(contract.address, ethers.utils.parseUnits('10', 18), { from: addr1.address });
+            await expect(contract.connect(addr1).lock(addr1.address, ethers.utils.parseUnits('10', 18), _param, _timestamp, signer.address, signature, { from: addr1.address }))
+                .to.emit(contract, 'LockedAmountAdded')
+                .withArgs(addr1.address, _amount);
+
+            // advance time by one hour and mine a new block
+            await time.increase(3600);
+
+            // 1h in seconds * earn rate of 10 tokens per second
+            const expectedEarning = 60 * 60 * 10;
+            const earned = await contract.earned(addr1.address);
+            expect(earned).to.equal(ethers.utils.parseUnits(`${expectedEarning}`, 18));
+
+            const balance = await contract.balanceOf(addr1.address);
+            expect(balance).to.equal(ethers.utils.parseUnits('10', 18));
+
+            await contract.setMinLockAmount(ethers.utils.parseUnits('16', 18));
+            expiration = await time.latest();
+
+            _from = contract.address;
+            _to = addr1.address;
+            _amount = ethers.utils.parseUnits('5', 18);
+            _scope = 'selfkey:staking:stake';
+            _timestamp = expiration;
+            _param = ethers.utils.hexZeroPad(0, 32);
+
+            hash = await authContract.getMessageHash(_from, _to, _amount, _scope, _param, _timestamp);
+            signature = await signer.signMessage(ethers.utils.arrayify(hash));
+            expect(await authContract.verify(_from, _to, _amount, _scope, _param, _timestamp, signer.address, signature)).to.equal(true);
+            await keyContract.connect(addr1).approve(contract.address, ethers.utils.parseUnits('10', 18), { from: addr1.address });
+            await expect(contract.connect(addr1).lock(addr1.address, ethers.utils.parseUnits('5', 18), _param, _timestamp, signer.address, signature, { from: addr1.address }))
+                .to.be.revertedWith("Amount is below minimum");
+        });
+
 
     });
 

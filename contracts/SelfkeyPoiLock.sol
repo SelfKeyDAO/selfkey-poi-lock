@@ -117,7 +117,7 @@ contract SelfkeyPoiLock is Initializable, OwnableUpgradeable, ISelfkeyPoiLock {
 
     function lock(address _account, uint256 _amount, bytes32 _param, uint _timestamp, address _signer, bytes memory _signature) external checkpoint(_account) {
         require(_amount > 0, "Amount is invalid");
-        require(_amount >= minLockAmount, "Amount is below minimum");
+        require((balanceOf[_account] + _amount) >= minLockAmount, "Amount is below minimum");
         require(lockToken.balanceOf(_account) >= _amount, "Not enough funds");
 
         authorizationContract.authorize(address(this), _account, _amount, 'selfkey:staking:stake', _param, _timestamp, _signer, _signature);
