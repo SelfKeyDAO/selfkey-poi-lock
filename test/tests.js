@@ -55,7 +55,7 @@ describe("Staking tests", function () {
         await selfContract.setAuthorizationContract(authContract.address);
 
         let stakingContractFactory = await ethers.getContractFactory("SelfkeyPoiLock");
-        contract = await upgrades.deployProxy(stakingContractFactory, [keyContract.address, selfContract.address, authContract.address]);
+        contract = await upgrades.deployProxy(stakingContractFactory, [keyContract.address, authContract.address]);
         await contract.deployed();
 
         await keyContract.connect(owner).transfer(addr1.address, ethers.utils.parseUnits('1000', 18));
@@ -72,7 +72,7 @@ describe("Staking tests", function () {
             expect(await keyContract.symbol()).to.equal('KEY');
 
             expect(await contract.lockToken()).to.equal(keyContract.address);
-            expect(await contract.mintableToken()).to.equal(selfContract.address);
+            // expect(await contract.mintableToken()).to.equal(selfContract.address);
             expect(await contract.authorizationContract()).to.equal(authContract.address);
 
             expect(await keyContract.balanceOf(addr1.address)).to.equal(ethers.utils.parseUnits('1000', 18));

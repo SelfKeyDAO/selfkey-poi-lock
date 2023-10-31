@@ -3,6 +3,8 @@ pragma solidity 0.8.19;
 
 interface ISelfkeyPoiLock {
 
+    event MintableTokenChanged(address _address);
+
     event StatusChanged(bool _active);
 
     event AuthorizedSignerChanged(address indexed _address);

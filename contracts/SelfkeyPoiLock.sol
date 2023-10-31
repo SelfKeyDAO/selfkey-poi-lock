@@ -48,18 +48,22 @@ contract SelfkeyPoiLock is Initializable, OwnableUpgradeable, ISelfkeyPoiLock {
         _disableInitializers();
     }
 
-    function initialize(address _lockToken, address _mintableToken, address _authorizationContract) public initializer {
+    function initialize(address _lockToken, address _authorizationContract) public initializer {
         __Ownable_init();
 
         lockToken = IERC20(_lockToken);
-        mintableToken = IERC20(_mintableToken);
         authorizationContract = ISelfkeyIdAuthorization(_authorizationContract);
-        mintableTokenAddress = _mintableToken;
 
         // Default governance values
         minLockAmount = 0;
         minUnlockAmount = 0;
         active = false;
+    }
+
+    function changeMintableToken(address _mintableToken) public onlyOwner() {
+        mintableToken = IERC20(_mintableToken);
+        mintableTokenAddress = _mintableToken;
+        emit MintableTokenChanged(_mintableToken);
     }
 
     function changeAuthorizedSigner(address _signer) public onlyOwner {
@@ -129,7 +133,7 @@ contract SelfkeyPoiLock is Initializable, OwnableUpgradeable, ISelfkeyPoiLock {
         emit LockedAmountAdded(_account, _amount);
     }
 
-    function unlock(address _account, uint _amount, bytes32 _param, uint _timestamp, address _signer, bytes memory _signature) external checkpoint(msg.sender) {
+    function unlock(address _account, uint _amount, bytes32 _param, uint _timestamp, address _signer, bytes memory _signature) external checkpoint(_account) {
         require(_amount > 0, "Amount = 0");
         require(_amount >= minUnlockAmount, "Amount is below minimum");
         require(_amount <= balanceOf[_account], "Not enough funds");
