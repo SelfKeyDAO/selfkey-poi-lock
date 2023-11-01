@@ -60,7 +60,7 @@ contract SelfkeyPoiLock is Initializable, OwnableUpgradeable, ISelfkeyPoiLock {
         active = false;
     }
 
-    function changeMintableToken(address _mintableToken) public onlyOwner() {
+    function changeMintableToken(address _mintableToken) public onlyOwner {
         mintableToken = IERC20(_mintableToken);
         mintableTokenAddress = _mintableToken;
         emit MintableTokenChanged(_mintableToken);
