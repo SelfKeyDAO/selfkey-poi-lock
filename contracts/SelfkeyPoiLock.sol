@@ -75,7 +75,6 @@ contract SelfkeyPoiLock is Initializable, OwnableUpgradeable, ISelfkeyPoiLock {
     function setMinLockAmount(uint _amount) external onlyOwner checkpoint(address(0)) {
         require(_amount > 0, "Invalid amount");
         minLockAmount = _amount;
-        updatedAt = block.timestamp;
         emit MinimumLockAmountChanged(_amount);
     }
 
