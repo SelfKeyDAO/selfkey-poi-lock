@@ -56,4 +56,6 @@ interface ISelfkeyPoiLock {
     function withdrawMintableToken(address _account, uint _amount) external;
 
     function balanceOf(address account) external view returns (uint);
+
+    event MintableTokenChanged(address _address);
 }

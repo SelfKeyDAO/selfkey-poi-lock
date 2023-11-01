@@ -71,7 +71,6 @@ contract SelfkeyPoiLock is Initializable, OwnableUpgradeable, ISelfkeyPoiLock {
     function setMinLockAmount(uint _amount) external onlyOwner checkpoint(address(0)) {
         require(_amount > 0, "Invalid amount");
         minLockAmount = _amount;
-        updatedAt = block.timestamp;
         emit MinimumLockAmountChanged(_amount);
     }
 
@@ -117,7 +116,7 @@ contract SelfkeyPoiLock is Initializable, OwnableUpgradeable, ISelfkeyPoiLock {
 
     function lock(address _account, uint256 _amount, bytes32 _param, uint _timestamp, address _signer, bytes memory _signature) external checkpoint(_account) {
         require(_amount > 0, "Amount is invalid");
-        require(_amount >= minLockAmount, "Amount is below minimum");
+        require((balanceOf[_account] + _amount) >= minLockAmount, "Amount is below minimum");
         require(lockToken.balanceOf(_account) >= _amount, "Not enough funds");
 
         authorizationContract.authorize(address(this), _account, _amount, 'selfkey:staking:stake', _param, _timestamp, _signer, _signature);
@@ -169,5 +168,10 @@ contract SelfkeyPoiLock is Initializable, OwnableUpgradeable, ISelfkeyPoiLock {
         }
     }
 
-}
+        function changeMintableToken(address _mintableToken) public onlyOwner {
+        mintableToken = IERC20(_mintableToken);
+        mintableTokenAddress = _mintableToken;
+        emit MintableTokenChanged(_mintableToken);
+    }
 
+}
