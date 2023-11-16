@@ -55,9 +55,10 @@ contract SelfkeyPoiLock is Initializable, OwnableUpgradeable, ISelfkeyPoiLock {
         authorizationContract = ISelfkeyIdAuthorization(_authorizationContract);
 
         // Default governance values
-        minLockAmount = 0;
+        minLockAmount = 17500000000000000000000;
         minUnlockAmount = 0;
-        active = false;
+        mintableRate = 1157407410000000;
+        active = true;
     }
 
     function changeMintableToken(address _mintableToken) public onlyOwner {
@@ -171,6 +172,4 @@ contract SelfkeyPoiLock is Initializable, OwnableUpgradeable, ISelfkeyPoiLock {
             emit MintableTokenWithdraw(_account, _amount);
         }
     }
-
 }
-
