@@ -1,5 +1,5 @@
 {
-	"name": "selfkey-unclaimed-rewards-registry-contract",
+	"name": "selfkey-poi-lock-contract",
 	"version": "1.0.0",
 	"description": "",
 	"main": "index.js",
