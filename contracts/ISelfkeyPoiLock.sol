@@ -3,6 +3,8 @@ pragma solidity 0.8.19;
 
 interface ISelfkeyPoiLock {
 
+    event MintableTokenChanged(address _address);
+
     event StatusChanged(bool _active);
 
     event AuthorizedSignerChanged(address indexed _address);
@@ -57,5 +59,4 @@ interface ISelfkeyPoiLock {
 
     function balanceOf(address account) external view returns (uint);
 
-    event MintableTokenChanged(address _address);
 }

@@ -20,9 +20,8 @@ All smart contracts are implemented in Solidity `^0.8.19`, using [Hardhat](https
 
     npx hardhat test
 
+## Contributing
+Please see the [contributing notes](CONTRIBUTING.md).
 
-### Mumbai Authorized Signer
-
-   - 0x89145000ADBeCe9D1FFB26F645dcb0883bc5c3d9
-
-## Team
+## Copyright
+Copyright SelfKey DAO Foundation 2024. All rights reserved.

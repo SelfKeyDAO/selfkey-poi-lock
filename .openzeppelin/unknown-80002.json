@@ -1,0 +1,224 @@
+{
+  "manifestVersion": "3.2",
+  "admin": {
+    "address": "0x6C260b06f2D671a32E3fc1dfC7ab8A15eA857331",
+    "txHash": "0x2053ca0542bf7fce9ed4a0d38a3a39913ead6582361985dc155db68e0d6a3ca9"
+  },
+  "proxies": [
+    {
+      "address": "0x112873c829C09edc161a0A20f2c4b05ABa1c4602",
+      "txHash": "0xdffb406032ca5b61e4ec68a77cb4d85a58b0f7bdd5bfe6b0081adce399e472df",
+      "kind": "transparent"
+    }
+  ],
+  "impls": {
+    "571fd5586439fa831e7fd61ac9e227eb90c497bf06d27d7c735266954218284e": {
+      "address": "0xF48748AFb2B7eEb0c93Fd0754f0684CE46e4F558",
+      "txHash": "0x4a74b095900c75a8b30484d4a205d2a25b31d66b26d255d1cc0f5a2c57622e33",
+      "layout": {
+        "solcVersion": "0.8.19",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:63",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:68"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "authorizedSigner",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_address",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:17"
+          },
+          {
+            "label": "lockToken",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_contract(IERC20)1619",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:19"
+          },
+          {
+            "label": "mintableToken",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_contract(IERC20)1619",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:20"
+          },
+          {
+            "label": "mintableTokenAddress",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_address",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:21"
+          },
+          {
+            "label": "authorizationContract",
+            "offset": 0,
+            "slot": "105",
+            "type": "t_contract(ISelfkeyIdAuthorization)1706",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:23"
+          },
+          {
+            "label": "minLockAmount",
+            "offset": 0,
+            "slot": "106",
+            "type": "t_uint256",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:26"
+          },
+          {
+            "label": "minUnlockAmount",
+            "offset": 0,
+            "slot": "107",
+            "type": "t_uint256",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:28"
+          },
+          {
+            "label": "active",
+            "offset": 0,
+            "slot": "108",
+            "type": "t_bool",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:30"
+          },
+          {
+            "label": "mintableRate",
+            "offset": 0,
+            "slot": "109",
+            "type": "t_uint256",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:32"
+          },
+          {
+            "label": "updatedAt",
+            "offset": 0,
+            "slot": "110",
+            "type": "t_uint256",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:34"
+          },
+          {
+            "label": "MintableTokenPerLockedTokenStored",
+            "offset": 0,
+            "slot": "111",
+            "type": "t_uint256",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:36"
+          },
+          {
+            "label": "userMintableTokenPerLockedTokenPaid",
+            "offset": 0,
+            "slot": "112",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:38"
+          },
+          {
+            "label": "mintableTokens",
+            "offset": 0,
+            "slot": "113",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:40"
+          },
+          {
+            "label": "totalSupply",
+            "offset": 0,
+            "slot": "114",
+            "type": "t_uint256",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:42"
+          },
+          {
+            "label": "balanceOf",
+            "offset": 0,
+            "slot": "115",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:44"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(IERC20)1619": {
+            "label": "contract IERC20",
+            "numberOfBytes": "20"
+          },
+          "t_contract(ISelfkeyIdAuthorization)1706": {
+            "label": "contract ISelfkeyIdAuthorization",
+            "numberOfBytes": "20"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    }
+  }
+}

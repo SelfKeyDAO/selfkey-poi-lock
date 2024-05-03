@@ -1,0 +1,1416 @@
+{
+  "manifestVersion": "3.2",
+  "admin": {
+    "address": "0x1C9205004591936b87D51304D5D3e21C71C47999",
+    "txHash": "0xabc8d507bdec05e4017cc485c30242b1955851754e06755b9d8014a315ff83e4"
+  },
+  "proxies": [
+    {
+      "address": "0x4c48fF4f94e0F74809A5403F3958C49427A5889C",
+      "txHash": "0x0d991eb664e7cec92b03bcdd3adb4decb103a0bc6c8a5c8b258a7e3feec39f98",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xda9783A24fa2D9aC452246b96029A9d1d40ECFE1",
+      "txHash": "0x87f123fc1d034863e8a92101f8170021711c20f3004b39c6e92becb90e666c55",
+      "kind": "transparent"
+    },
+    {
+      "address": "0xa376189030da57b32AaF85629169889cE669C543",
+      "txHash": "0x0aabbdec730d56e71f8b832bb1e983ee6cff12eb2b414c7a173f296c9e1cb3bd",
+      "kind": "transparent"
+    }
+  ],
+  "impls": {
+    "b4c0640f7bab9f84bf2fb2e45d9902d2fea958b982b6cfbd927d08ecfebd24a0": {
+      "address": "0x6b4fDB188F732a09fc313840027371f3A80Ff5Ef",
+      "txHash": "0x6189d38fea9745e8a1e24ce4f68f685352fe2e1f8718efa4c9064a6c02e07106",
+      "layout": {
+        "solcVersion": "0.8.19",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:63",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:68"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "authorizedSigner",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_address",
+            "contract": "SelfkeyStaking",
+            "src": "contracts/SelfkeyStaking.sol:18"
+          },
+          {
+            "label": "stakingToken",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_contract(IERC20)1601",
+            "contract": "SelfkeyStaking",
+            "src": "contracts/SelfkeyStaking.sol:20"
+          },
+          {
+            "label": "rewardsToken",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_contract(IERC20)1601",
+            "contract": "SelfkeyStaking",
+            "src": "contracts/SelfkeyStaking.sol:21"
+          },
+          {
+            "label": "authorizationContract",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_contract(ISelfkeyIdAuthorization)1688",
+            "contract": "SelfkeyStaking",
+            "src": "contracts/SelfkeyStaking.sol:22"
+          },
+          {
+            "label": "rewardsTokenAddress",
+            "offset": 0,
+            "slot": "105",
+            "type": "t_address",
+            "contract": "SelfkeyStaking",
+            "src": "contracts/SelfkeyStaking.sol:23"
+          },
+          {
+            "label": "minStakeAmount",
+            "offset": 0,
+            "slot": "106",
+            "type": "t_uint256",
+            "contract": "SelfkeyStaking",
+            "src": "contracts/SelfkeyStaking.sol:25"
+          },
+          {
+            "label": "minWithdrawAmount",
+            "offset": 0,
+            "slot": "107",
+            "type": "t_uint256",
+            "contract": "SelfkeyStaking",
+            "src": "contracts/SelfkeyStaking.sol:26"
+          },
+          {
+            "label": "timeLockDuration",
+            "offset": 0,
+            "slot": "108",
+            "type": "t_uint256",
+            "contract": "SelfkeyStaking",
+            "src": "contracts/SelfkeyStaking.sol:27"
+          },
+          {
+            "label": "active",
+            "offset": 0,
+            "slot": "109",
+            "type": "t_bool",
+            "contract": "SelfkeyStaking",
+            "src": "contracts/SelfkeyStaking.sol:29"
+          },
+          {
+            "label": "duration",
+            "offset": 0,
+            "slot": "110",
+            "type": "t_uint256",
+            "contract": "SelfkeyStaking",
+            "src": "contracts/SelfkeyStaking.sol:31"
+          },
+          {
+            "label": "finishAt",
+            "offset": 0,
+            "slot": "111",
+            "type": "t_uint256",
+            "contract": "SelfkeyStaking",
+            "src": "contracts/SelfkeyStaking.sol:33"
+          },
+          {
+            "label": "updatedAt",
+            "offset": 0,
+            "slot": "112",
+            "type": "t_uint256",
+            "contract": "SelfkeyStaking",
+            "src": "contracts/SelfkeyStaking.sol:35"
+          },
+          {
+            "label": "rewardRate",
+            "offset": 0,
+            "slot": "113",
+            "type": "t_uint256",
+            "contract": "SelfkeyStaking",
+            "src": "contracts/SelfkeyStaking.sol:37"
+          },
+          {
+            "label": "rewardPerTokenStored",
+            "offset": 0,
+            "slot": "114",
+            "type": "t_uint256",
+            "contract": "SelfkeyStaking",
+            "src": "contracts/SelfkeyStaking.sol:39"
+          },
+          {
+            "label": "userRewardPerTokenPaid",
+            "offset": 0,
+            "slot": "115",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "SelfkeyStaking",
+            "src": "contracts/SelfkeyStaking.sol:41"
+          },
+          {
+            "label": "rewards",
+            "offset": 0,
+            "slot": "116",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "SelfkeyStaking",
+            "src": "contracts/SelfkeyStaking.sol:43"
+          },
+          {
+            "label": "_timeLockEntries",
+            "offset": 0,
+            "slot": "117",
+            "type": "t_mapping(t_address,t_array(t_struct(StakingTimeLock)796_storage)dyn_storage)",
+            "contract": "SelfkeyStaking",
+            "src": "contracts/SelfkeyStaking.sol:45"
+          },
+          {
+            "label": "totalSupply",
+            "offset": 0,
+            "slot": "118",
+            "type": "t_uint256",
+            "contract": "SelfkeyStaking",
+            "src": "contracts/SelfkeyStaking.sol:48"
+          },
+          {
+            "label": "balanceOf",
+            "offset": 0,
+            "slot": "119",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "SelfkeyStaking",
+            "src": "contracts/SelfkeyStaking.sol:50"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_struct(StakingTimeLock)796_storage)dyn_storage": {
+            "label": "struct StakingTimeLock[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(IERC20)1601": {
+            "label": "contract IERC20",
+            "numberOfBytes": "20"
+          },
+          "t_contract(ISelfkeyIdAuthorization)1688": {
+            "label": "contract ISelfkeyIdAuthorization",
+            "numberOfBytes": "20"
+          },
+          "t_mapping(t_address,t_array(t_struct(StakingTimeLock)796_storage)dyn_storage)": {
+            "label": "mapping(address => struct StakingTimeLock[])",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_struct(StakingTimeLock)796_storage": {
+            "label": "struct StakingTimeLock",
+            "members": [
+              {
+                "label": "timestamp",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "amount",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "bf4734b4143d4606bf30aeb1414fd5bc0239887d83a9c6f45c474889a101e03a": {
+      "address": "0x8b4cA84E1Ec2b5EB454F8bf901fb4B8BDACe9CaE",
+      "txHash": "0xf5dd16254c634be803d6b80cf2413848aca8a16c1523e4a24cf830123295e5e5",
+      "layout": {
+        "solcVersion": "0.8.19",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:63",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:68"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "authorizedSigner",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_address",
+            "contract": "SelfkeyStaking",
+            "src": "contracts/SelfkeyStaking.sol:17"
+          },
+          {
+            "label": "stakingToken",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_contract(IERC20)1675",
+            "contract": "SelfkeyStaking",
+            "src": "contracts/SelfkeyStaking.sol:19"
+          },
+          {
+            "label": "rewardsToken",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_contract(IERC20)1675",
+            "contract": "SelfkeyStaking",
+            "src": "contracts/SelfkeyStaking.sol:20"
+          },
+          {
+            "label": "authorizationContract",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_contract(ISelfkeyIdAuthorization)1762",
+            "contract": "SelfkeyStaking",
+            "src": "contracts/SelfkeyStaking.sol:21"
+          },
+          {
+            "label": "rewardsTokenAddress",
+            "offset": 0,
+            "slot": "105",
+            "type": "t_address",
+            "contract": "SelfkeyStaking",
+            "src": "contracts/SelfkeyStaking.sol:22"
+          },
+          {
+            "label": "minStakeAmount",
+            "offset": 0,
+            "slot": "106",
+            "type": "t_uint256",
+            "contract": "SelfkeyStaking",
+            "src": "contracts/SelfkeyStaking.sol:24"
+          },
+          {
+            "label": "minWithdrawAmount",
+            "offset": 0,
+            "slot": "107",
+            "type": "t_uint256",
+            "contract": "SelfkeyStaking",
+            "src": "contracts/SelfkeyStaking.sol:25"
+          },
+          {
+            "label": "timeLockDuration",
+            "offset": 0,
+            "slot": "108",
+            "type": "t_uint256",
+            "contract": "SelfkeyStaking",
+            "src": "contracts/SelfkeyStaking.sol:26"
+          },
+          {
+            "label": "active",
+            "offset": 0,
+            "slot": "109",
+            "type": "t_bool",
+            "contract": "SelfkeyStaking",
+            "src": "contracts/SelfkeyStaking.sol:28"
+          },
+          {
+            "label": "updatedAt",
+            "offset": 0,
+            "slot": "110",
+            "type": "t_uint256",
+            "contract": "SelfkeyStaking",
+            "src": "contracts/SelfkeyStaking.sol:30"
+          },
+          {
+            "label": "rewardRate",
+            "offset": 0,
+            "slot": "111",
+            "type": "t_uint256",
+            "contract": "SelfkeyStaking",
+            "src": "contracts/SelfkeyStaking.sol:32"
+          },
+          {
+            "label": "rewardPerTokenStored",
+            "offset": 0,
+            "slot": "112",
+            "type": "t_uint256",
+            "contract": "SelfkeyStaking",
+            "src": "contracts/SelfkeyStaking.sol:34"
+          },
+          {
+            "label": "userRewardPerTokenPaid",
+            "offset": 0,
+            "slot": "113",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "SelfkeyStaking",
+            "src": "contracts/SelfkeyStaking.sol:36"
+          },
+          {
+            "label": "rewards",
+            "offset": 0,
+            "slot": "114",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "SelfkeyStaking",
+            "src": "contracts/SelfkeyStaking.sol:38"
+          },
+          {
+            "label": "_timeLockEntries",
+            "offset": 0,
+            "slot": "115",
+            "type": "t_mapping(t_address,t_array(t_struct(StakingTimeLock)874_storage)dyn_storage)",
+            "contract": "SelfkeyStaking",
+            "src": "contracts/SelfkeyStaking.sol:40"
+          },
+          {
+            "label": "totalSupply",
+            "offset": 0,
+            "slot": "116",
+            "type": "t_uint256",
+            "contract": "SelfkeyStaking",
+            "src": "contracts/SelfkeyStaking.sol:43"
+          },
+          {
+            "label": "balanceOf",
+            "offset": 0,
+            "slot": "117",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "SelfkeyStaking",
+            "src": "contracts/SelfkeyStaking.sol:45"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_struct(StakingTimeLock)874_storage)dyn_storage": {
+            "label": "struct StakingTimeLock[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(IERC20)1675": {
+            "label": "contract IERC20",
+            "numberOfBytes": "20"
+          },
+          "t_contract(ISelfkeyIdAuthorization)1762": {
+            "label": "contract ISelfkeyIdAuthorization",
+            "numberOfBytes": "20"
+          },
+          "t_mapping(t_address,t_array(t_struct(StakingTimeLock)874_storage)dyn_storage)": {
+            "label": "mapping(address => struct StakingTimeLock[])",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_struct(StakingTimeLock)874_storage": {
+            "label": "struct StakingTimeLock",
+            "members": [
+              {
+                "label": "timestamp",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "amount",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "15d81f6e225ce23f7d8c5d0f727c5ce0f04bb2385a17c9efe3ee97cff137ed09": {
+      "address": "0xE6f9CBf6166F8bfb66C370edf9516C54663f8fb2",
+      "txHash": "0xa9beec29f1d4987034c984d79b04634d493d02a045b5ea5c2e134bd16396d5ff",
+      "layout": {
+        "solcVersion": "0.8.19",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:63",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:68"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "authorizedSigner",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_address",
+            "contract": "SelfkeyStaking",
+            "src": "contracts/SelfkeyStaking.sol:17"
+          },
+          {
+            "label": "stakingToken",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_contract(IERC20)1644",
+            "contract": "SelfkeyStaking",
+            "src": "contracts/SelfkeyStaking.sol:19"
+          },
+          {
+            "label": "rewardsToken",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_contract(IERC20)1644",
+            "contract": "SelfkeyStaking",
+            "src": "contracts/SelfkeyStaking.sol:20"
+          },
+          {
+            "label": "authorizationContract",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_contract(ISelfkeyIdAuthorization)1731",
+            "contract": "SelfkeyStaking",
+            "src": "contracts/SelfkeyStaking.sol:21"
+          },
+          {
+            "label": "rewardsTokenAddress",
+            "offset": 0,
+            "slot": "105",
+            "type": "t_address",
+            "contract": "SelfkeyStaking",
+            "src": "contracts/SelfkeyStaking.sol:22"
+          },
+          {
+            "label": "minStakeAmount",
+            "offset": 0,
+            "slot": "106",
+            "type": "t_uint256",
+            "contract": "SelfkeyStaking",
+            "src": "contracts/SelfkeyStaking.sol:24"
+          },
+          {
+            "label": "minWithdrawAmount",
+            "offset": 0,
+            "slot": "107",
+            "type": "t_uint256",
+            "contract": "SelfkeyStaking",
+            "src": "contracts/SelfkeyStaking.sol:25"
+          },
+          {
+            "label": "timeLockDuration",
+            "offset": 0,
+            "slot": "108",
+            "type": "t_uint256",
+            "contract": "SelfkeyStaking",
+            "src": "contracts/SelfkeyStaking.sol:26"
+          },
+          {
+            "label": "active",
+            "offset": 0,
+            "slot": "109",
+            "type": "t_bool",
+            "contract": "SelfkeyStaking",
+            "src": "contracts/SelfkeyStaking.sol:28"
+          },
+          {
+            "label": "updatedAt",
+            "offset": 0,
+            "slot": "110",
+            "type": "t_uint256",
+            "contract": "SelfkeyStaking",
+            "src": "contracts/SelfkeyStaking.sol:30"
+          },
+          {
+            "label": "rewardRate",
+            "offset": 0,
+            "slot": "111",
+            "type": "t_uint256",
+            "contract": "SelfkeyStaking",
+            "src": "contracts/SelfkeyStaking.sol:32"
+          },
+          {
+            "label": "rewardPerTokenStored",
+            "offset": 0,
+            "slot": "112",
+            "type": "t_uint256",
+            "contract": "SelfkeyStaking",
+            "src": "contracts/SelfkeyStaking.sol:34"
+          },
+          {
+            "label": "userRewardPerTokenPaid",
+            "offset": 0,
+            "slot": "113",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "SelfkeyStaking",
+            "src": "contracts/SelfkeyStaking.sol:36"
+          },
+          {
+            "label": "rewards",
+            "offset": 0,
+            "slot": "114",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "SelfkeyStaking",
+            "src": "contracts/SelfkeyStaking.sol:38"
+          },
+          {
+            "label": "_timeLockEntries",
+            "offset": 0,
+            "slot": "115",
+            "type": "t_mapping(t_address,t_array(t_struct(StakingTimeLock)812_storage)dyn_storage)",
+            "contract": "SelfkeyStaking",
+            "src": "contracts/SelfkeyStaking.sol:40"
+          },
+          {
+            "label": "totalSupply",
+            "offset": 0,
+            "slot": "116",
+            "type": "t_uint256",
+            "contract": "SelfkeyStaking",
+            "src": "contracts/SelfkeyStaking.sol:43"
+          },
+          {
+            "label": "balanceOf",
+            "offset": 0,
+            "slot": "117",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "SelfkeyStaking",
+            "src": "contracts/SelfkeyStaking.sol:45"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_struct(StakingTimeLock)812_storage)dyn_storage": {
+            "label": "struct StakingTimeLock[]",
+            "numberOfBytes": "32"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(IERC20)1644": {
+            "label": "contract IERC20",
+            "numberOfBytes": "20"
+          },
+          "t_contract(ISelfkeyIdAuthorization)1731": {
+            "label": "contract ISelfkeyIdAuthorization",
+            "numberOfBytes": "20"
+          },
+          "t_mapping(t_address,t_array(t_struct(StakingTimeLock)812_storage)dyn_storage)": {
+            "label": "mapping(address => struct StakingTimeLock[])",
+            "numberOfBytes": "32"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_struct(StakingTimeLock)812_storage": {
+            "label": "struct StakingTimeLock",
+            "members": [
+              {
+                "label": "timestamp",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "amount",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "1"
+              }
+            ],
+            "numberOfBytes": "64"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "40ae70650499f4d98451a7f0dbf95d5e2444ee968163209ac3a5208ca07aef6e": {
+      "address": "0x0Ed18bca01288D842CF416E42D7fC8F0348c78B1",
+      "txHash": "0xa34d18f5df41321c01748342523133b1895941da94ffa6ad9c8faefa4d04fce9",
+      "layout": {
+        "solcVersion": "0.8.19",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:63",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:68"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "authorizedSigner",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_address",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:17"
+          },
+          {
+            "label": "lockToken",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_contract(IERC20)1524",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:19"
+          },
+          {
+            "label": "mintableToken",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_contract(IERC20)1524",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:20"
+          },
+          {
+            "label": "mintableTokenAddress",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_address",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:21"
+          },
+          {
+            "label": "authorizationContract",
+            "offset": 0,
+            "slot": "105",
+            "type": "t_contract(ISelfkeyIdAuthorization)1611",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:23"
+          },
+          {
+            "label": "minLockAmount",
+            "offset": 0,
+            "slot": "106",
+            "type": "t_uint256",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:26"
+          },
+          {
+            "label": "minUnlockAmount",
+            "offset": 0,
+            "slot": "107",
+            "type": "t_uint256",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:28"
+          },
+          {
+            "label": "active",
+            "offset": 0,
+            "slot": "108",
+            "type": "t_bool",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:30"
+          },
+          {
+            "label": "mintableRate",
+            "offset": 0,
+            "slot": "109",
+            "type": "t_uint256",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:32"
+          },
+          {
+            "label": "updatedAt",
+            "offset": 0,
+            "slot": "110",
+            "type": "t_uint256",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:34"
+          },
+          {
+            "label": "MintableTokenPerLockedTokenStored",
+            "offset": 0,
+            "slot": "111",
+            "type": "t_uint256",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:36"
+          },
+          {
+            "label": "userMintableTokenPerLockedTokenPaid",
+            "offset": 0,
+            "slot": "112",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:38"
+          },
+          {
+            "label": "mintableTokens",
+            "offset": 0,
+            "slot": "113",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:40"
+          },
+          {
+            "label": "totalSupply",
+            "offset": 0,
+            "slot": "114",
+            "type": "t_uint256",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:42"
+          },
+          {
+            "label": "balanceOf",
+            "offset": 0,
+            "slot": "115",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:44"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(IERC20)1524": {
+            "label": "contract IERC20",
+            "numberOfBytes": "20"
+          },
+          "t_contract(ISelfkeyIdAuthorization)1611": {
+            "label": "contract ISelfkeyIdAuthorization",
+            "numberOfBytes": "20"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "872a55461d21bcc789dbfc28ff1dc94f80f5f802bae6db140f765f071ce6e2ae": {
+      "address": "0x215930225D8a3779a1C8B378aB60FC453aCF2d7A",
+      "txHash": "0x9583fdd13c8dd588122aa5efcee8a083bb953b91c65633507cd3e9268a934c11",
+      "layout": {
+        "solcVersion": "0.8.19",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:63",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:68"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "authorizedSigner",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_address",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:17"
+          },
+          {
+            "label": "lockToken",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_contract(IERC20)1529",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:19"
+          },
+          {
+            "label": "mintableToken",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_contract(IERC20)1529",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:20"
+          },
+          {
+            "label": "mintableTokenAddress",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_address",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:21"
+          },
+          {
+            "label": "authorizationContract",
+            "offset": 0,
+            "slot": "105",
+            "type": "t_contract(ISelfkeyIdAuthorization)1616",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:23"
+          },
+          {
+            "label": "minLockAmount",
+            "offset": 0,
+            "slot": "106",
+            "type": "t_uint256",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:26"
+          },
+          {
+            "label": "minUnlockAmount",
+            "offset": 0,
+            "slot": "107",
+            "type": "t_uint256",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:28"
+          },
+          {
+            "label": "active",
+            "offset": 0,
+            "slot": "108",
+            "type": "t_bool",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:30"
+          },
+          {
+            "label": "mintableRate",
+            "offset": 0,
+            "slot": "109",
+            "type": "t_uint256",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:32"
+          },
+          {
+            "label": "updatedAt",
+            "offset": 0,
+            "slot": "110",
+            "type": "t_uint256",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:34"
+          },
+          {
+            "label": "MintableTokenPerLockedTokenStored",
+            "offset": 0,
+            "slot": "111",
+            "type": "t_uint256",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:36"
+          },
+          {
+            "label": "userMintableTokenPerLockedTokenPaid",
+            "offset": 0,
+            "slot": "112",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:38"
+          },
+          {
+            "label": "mintableTokens",
+            "offset": 0,
+            "slot": "113",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:40"
+          },
+          {
+            "label": "totalSupply",
+            "offset": 0,
+            "slot": "114",
+            "type": "t_uint256",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:42"
+          },
+          {
+            "label": "balanceOf",
+            "offset": 0,
+            "slot": "115",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:44"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(IERC20)1529": {
+            "label": "contract IERC20",
+            "numberOfBytes": "20"
+          },
+          "t_contract(ISelfkeyIdAuthorization)1616": {
+            "label": "contract ISelfkeyIdAuthorization",
+            "numberOfBytes": "20"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "ccd252bec4f5c848691688f788f388108b8ac3c4d2011dab127e763253c96673": {
+      "address": "0x813283eB967ABbCB5F9E39bf17E258AeDa589eCc",
+      "txHash": "0x7d3efd43ac6f811b272d9c4eeb98e14bb1102750d665f116f444d6ae062fb967",
+      "layout": {
+        "solcVersion": "0.8.19",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:63",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:68"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "authorizedSigner",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_address",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:17"
+          },
+          {
+            "label": "lockToken",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_contract(IERC20)1628",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:19"
+          },
+          {
+            "label": "mintableToken",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_contract(IERC20)1628",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:20"
+          },
+          {
+            "label": "mintableTokenAddress",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_address",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:21"
+          },
+          {
+            "label": "authorizationContract",
+            "offset": 0,
+            "slot": "105",
+            "type": "t_contract(ISelfkeyIdAuthorization)1715",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:23"
+          },
+          {
+            "label": "minLockAmount",
+            "offset": 0,
+            "slot": "106",
+            "type": "t_uint256",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:26"
+          },
+          {
+            "label": "minUnlockAmount",
+            "offset": 0,
+            "slot": "107",
+            "type": "t_uint256",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:28"
+          },
+          {
+            "label": "active",
+            "offset": 0,
+            "slot": "108",
+            "type": "t_bool",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:30"
+          },
+          {
+            "label": "mintableRate",
+            "offset": 0,
+            "slot": "109",
+            "type": "t_uint256",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:32"
+          },
+          {
+            "label": "updatedAt",
+            "offset": 0,
+            "slot": "110",
+            "type": "t_uint256",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:34"
+          },
+          {
+            "label": "MintableTokenPerLockedTokenStored",
+            "offset": 0,
+            "slot": "111",
+            "type": "t_uint256",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:36"
+          },
+          {
+            "label": "userMintableTokenPerLockedTokenPaid",
+            "offset": 0,
+            "slot": "112",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:38"
+          },
+          {
+            "label": "mintableTokens",
+            "offset": 0,
+            "slot": "113",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:40"
+          },
+          {
+            "label": "totalSupply",
+            "offset": 0,
+            "slot": "114",
+            "type": "t_uint256",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:42"
+          },
+          {
+            "label": "balanceOf",
+            "offset": 0,
+            "slot": "115",
+            "type": "t_mapping(t_address,t_uint256)",
+            "contract": "SelfkeyPoiLock",
+            "src": "contracts/SelfkeyPoiLock.sol:44"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_contract(IERC20)1628": {
+            "label": "contract IERC20",
+            "numberOfBytes": "20"
+          },
+          "t_contract(ISelfkeyIdAuthorization)1715": {
+            "label": "contract ISelfkeyIdAuthorization",
+            "numberOfBytes": "20"
+          },
+          "t_mapping(t_address,t_uint256)": {
+            "label": "mapping(address => uint256)",
+            "numberOfBytes": "32"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    }
+  }
+}
